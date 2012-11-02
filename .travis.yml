@@ -1,0 +1,4 @@
+bundler_args: --without development
+rvm:
+  - 1.9.3
+

@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dfxml xmloutputversion='1.0'>
+  <metadata 
+  xmlns='http://afflib.org/tcpflow/' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+  xmlns:dc='http://purl.org/dc/elements/1.1/'>
+    <dc:type>Feature Extraction</dc:type>
+  </metadata>
+  <creator version='1.0'>
+    <program>TCPFLOW</program>
+    <version>1.3.0</version>
+    <build_environment>
+      <compiler>GCC 4.2</compiler>
+    </build_environment>
+    <execution_environment>
+      <os_sysname>Darwin</os_sysname>
+      <os_release>12.2.0</os_release>
+      <os_version>Darwin Kernel Version 12.2.0: Sat Aug 25 00:48:52 PDT 2012; root:xnu-2050.18.24~1/RELEASE_X86_64</os_version>
+      <host>pomme.home</host>
+      <arch>x86_64</arch>
+      <command_line>tcpflow -c -p -s -i en1 port 3000</command_line>
+      <uid>0</uid>
+      <start_time>2012-10-31T12:57:39Z</start_time>
+    </execution_environment>
+  </creator>
+  <configuration>
+  </configuration>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49870</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.884333Z' endtime='2012-10-31T13:57:50.308991Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='18' srcport='3000' dstport='49870' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49870</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:50.312534Z' endtime='2012-10-31T13:57:50.312534Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='1' srcport='3000' dstport='49870' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49870-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.884065Z' endtime='2012-10-31T13:57:50.356369Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='20' srcport='49870' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49873-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.890537Z' endtime='2012-10-31T13:58:01.861868Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='9' srcport='49873' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49873</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.890676Z' endtime='2012-10-31T13:58:01.862114Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='10' srcport='3000' dstport='49873' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49872-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.890355Z' endtime='2012-10-31T13:58:01.863328Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='9' srcport='49872' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49871-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.887984Z' endtime='2012-10-31T13:58:01.863682Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='12' srcport='49871' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49872</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.890565Z' endtime='2012-10-31T13:58:01.863711Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='10' srcport='3000' dstport='49872' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49871</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:57:49.888206Z' endtime='2012-10-31T13:58:01.863807Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='13' srcport='3000' dstport='49871' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49879</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:12.006066Z' endtime='2012-10-31T13:59:12.049650Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='5' srcport='3000' dstport='49879' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49879</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:12.053563Z' endtime='2012-10-31T13:59:12.053563Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='1' srcport='3000' dstport='49879' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49879-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:12.005687Z' endtime='2012-10-31T13:59:12.066345Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='7' srcport='49879' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49877-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.771985Z' endtime='2012-10-31T13:59:17.741454Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='9' srcport='49877' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49876-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.771414Z' endtime='2012-10-31T13:59:17.741812Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='9' srcport='49876' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49877</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.772144Z' endtime='2012-10-31T13:59:17.741857Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='10' srcport='3000' dstport='49877' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49876</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.771639Z' endtime='2012-10-31T13:59:17.742001Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='10' srcport='3000' dstport='49876' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49875-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.769349Z' endtime='2012-10-31T13:59:17.744050Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='9' srcport='49875' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49874-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.768668Z' endtime='2012-10-31T13:59:17.744099Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='15' srcport='49874' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49875</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.769512Z' endtime='2012-10-31T13:59:17.744330Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='10' srcport='3000' dstport='49875' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49874</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:05.768939Z' endtime='2012-10-31T13:59:17.744331Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='16' srcport='3000' dstport='49874' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.002.49885-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:12.108827Z' endtime='2012-10-31T13:59:24.190630Z' src_ipn='10.11.20.2' dst_ipn='10.11.20.4' packets='18' srcport='49885' dstport='3000' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.002.49885</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T13:59:12.108971Z' endtime='2012-10-31T13:59:24.190941Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.2' packets='20' srcport='3000' dstport='49885' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.003.64824</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T14:01:44.888858Z' endtime='2012-10-31T14:01:44.892576Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.3' packets='5' srcport='3000' dstport='64824' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.004.03000-010.011.020.003.64824</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T14:01:44.895365Z' endtime='2012-10-31T14:01:44.895365Z' src_ipn='10.11.20.4' dst_ipn='10.11.20.3' packets='1' srcport='3000' dstport='64824' family='2' out_of_order_count='0' />
+  </fileobject>
+  <fileobject>
+    <filename>010.011.020.003.64824-010.011.020.004.03000</filename>
+    <filesize>0</filesize>
+    <tcpflow startime='2012-10-31T14:01:44.888669Z' endtime='2012-10-31T14:01:44.899458Z' src_ipn='10.11.20.3' dst_ipn='10.11.20.4' packets='7' srcport='64824' dstport='3000' family='2' out_of_order_count='0' />
