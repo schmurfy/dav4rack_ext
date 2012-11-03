@@ -35,12 +35,12 @@ Faraday::Connection::METHODS << :report
 
 response = c.run_request(:propfind, nil, <<-EOS, nil)
 <?xml version="1.0" encoding="UTF-8"?>
-<A:propfind xmlns:A="DAV:">
+<A:propfind xmlns:A="DAV:" xmlns:B="urn:ietf:params:xml:ns:carddav" xmlns:C="http://calendarserver.org/ns/">
   <A:prop>
-    <B:addressbook-home-set xmlns:B="urn:ietf:params:xml:ns:carddav"/>
-    <B:directory-gateway xmlns:B="urn:ietf:params:xml:ns:carddav"/>
+    <B:addressbook-home-set/>
+    <B:directory-gateway/>
     <A:displayname/>
-    <C:email-address-set xmlns:C="http://calendarserver.org/ns/"/>
+    <C:email-address-set/>
     <A:principal-collection-set/>
     <A:principal-URL/>
     <A:resource-id/>

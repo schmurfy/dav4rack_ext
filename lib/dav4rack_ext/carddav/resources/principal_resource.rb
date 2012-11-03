@@ -41,14 +41,18 @@ module DAV4Rack
       end
       
       define_properties('urn:ietf:params:xml:ns:carddav') do
-        property('addressbook-home-set') do
-          "<C:addressbook-home-set xmlns:C='urn:ietf:params:xml:ns:carddav'><D:href xmlns:D='DAV:'>/book/</D:href></C:addressbook-home-set>"
-        end
-        
-        property('principal-address') do
-          ""
-        end
+        explicit do
+          property('addressbook-home-set') do
+            "<C:addressbook-home-set xmlns:C='urn:ietf:params:xml:ns:carddav'><D:href xmlns:D='DAV:'>/book/</D:href></C:addressbook-home-set>"
+          end
+          
+          # TODO: should return the user's card url
+          # (ex: /users/schmurfy.vcf ) (RFC 7.1.2)
+          property('principal-address') do
+            ""
+          end
 
+        end
       end
       
 

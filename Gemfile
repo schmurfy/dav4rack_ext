@@ -15,7 +15,7 @@ end
 group(:test) do
   gem 'schmurfy-bacon', path: '/Users/schmurfy/Dev/personal/gems/bacon'
   gem 'mocha',          '~> 0.10.0'
-  gem 'factory_girl'
+  gem 'factory_girl',   '~> 4.0'
   
   gem 'simplecov'
   gem 'guard'

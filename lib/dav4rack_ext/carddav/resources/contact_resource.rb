@@ -68,7 +68,8 @@ module DAV4Rack
 
       def exist?
         Logger.info "ContactR::exist?(#{public_path});"
-        current_user.find_contact(File.split(public_path).last) != nil
+        @contact != nil
+        # current_user.find_contact(File.split(public_path).last) != nil
       end
       
       def setup
@@ -83,7 +84,7 @@ module DAV4Rack
         #   @book_path.slice!(0..-5)
         # end
 
-        @contact = @address_book.find_contact(uid)
+        @contact = current_user.find_contact(uid)
         # raise "Unable to find contact with #{uid}" unless @contact
         
       end
@@ -108,7 +109,6 @@ module DAV4Rack
         want_new_contact = (request.env['HTTP_IF_NONE_MATCH'] == '*')
         
         @contact = current_user.find_contact(uid)
-        p @contact
 
         # If the client has explicitly stated they want a new contact
         raise Conflict if (want_new_contact and @contact)
@@ -142,6 +142,7 @@ module DAV4Rack
       end
       
       def get(request, response)
+        response.headers['Etag'] = @contact.etag
         response.body = @contact.vcard.vcard
       end
 

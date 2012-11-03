@@ -36,8 +36,11 @@ module DAV4Rack
         obj = MethodMissingRedirector.new(:property, :explicit) do |method_name, name, &block|
           if method_name == :property
             define_property(namespace, name.to_s, explicit, &block)
-          else
+          elsif method_name == :explicit
             explicit = true
+            block.call
+          else
+            raise NoMethodError, method_name
           end
         end
         
@@ -169,14 +172,16 @@ module DAV4Rack
       # but it's nice to do some sanity checking so keeping a list is good
       def properties
         # TODO: test this
-        select_properties = self.class.properties.reject{|key, arr| arr[1] == true }
+        selected_properties = self.class.properties.reject{|key, arr| arr[1] == true }
         ret = {}
-        select_properties.keys.each do |key|
+        selected_properties.keys.map do |key|
           ns, name = key.split('*')
-          (ret[ns] ||= []) << name
+          {:name => name, :ns_href => ns}
         end
-        
-        ret
+      end
+      
+      def children
+        []
       end
 
 

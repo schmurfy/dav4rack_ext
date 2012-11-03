@@ -17,12 +17,14 @@ end
 $LOAD_PATH.unshift( File.expand_path('../../lib' , __FILE__) )
 require 'dav4rack_ext'
 require 'rack/test'
+require 'factory_girl'
 
 require 'bacon/ext/mocha'
 # require 'bacon/ext/em'
 # require 'bacon/ext/http'
 
 require_relative '../example/rack_sniffer'
+require_relative 'factories'
 
 Thread.abort_on_exception = true
 

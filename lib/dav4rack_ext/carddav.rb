@@ -1,6 +1,6 @@
 require 'dav4rack'
 
-# require_relative 'carddav/controller'
+require_relative 'carddav/controller'
 require_relative 'carddav/resource'
 require_relative 'carddav/resources/principal_resource'
 require_relative 'carddav/resources/addressbook_base_resource'

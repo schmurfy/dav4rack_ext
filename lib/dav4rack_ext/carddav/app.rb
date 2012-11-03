@@ -6,7 +6,7 @@ module DAV4Rack
     DAV_EXTENSIONS = ["access-control", "addressbook"].freeze
     
     def self.app(opts = {})
-      logger = opts.delete(:logget)
+      logger = opts.delete(:logger)
       current_user = opts.delete(:current_user)
       addressbook_model = opts.delete(:addressbook_model)
       contact_model = opts.delete(:contact_model)
@@ -40,7 +40,6 @@ module DAV4Rack
           )
         
         r.add('/book/:book_id').to DAV4Rack::Handler.new(
-            :additional_verbs         => ['report'],
             :log_to                   => logger,
             :dav_extensions           => DAV_EXTENSIONS,
             :alway_include_dav_header => true,
@@ -48,6 +47,7 @@ module DAV4Rack
             :root                     => '/book',
             :root_uri_path            => '/book',
             :resource_class           => DAV4Rack::Carddav::AddressbookResource,
+            :controller_class         => DAV4Rack::Carddav::Controller,
             :addresbook_model         => addressbook_model,
             :contact_model            => contact_model,
             :current_user             => current_user
