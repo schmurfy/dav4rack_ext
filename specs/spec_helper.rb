@@ -20,10 +20,10 @@ require 'rack/test'
 require 'factory_girl'
 
 require 'bacon/ext/mocha'
-# require 'bacon/ext/em'
-# require 'bacon/ext/http'
+
 
 require_relative '../example/rack_sniffer'
+require_relative 'support/http'
 require_relative 'factories'
 
 Thread.abort_on_exception = true
@@ -39,5 +39,5 @@ module Rack::Test
   end
 end
 
-Bacon::Context.send(:include, Rack::Test::Methods)
+
 

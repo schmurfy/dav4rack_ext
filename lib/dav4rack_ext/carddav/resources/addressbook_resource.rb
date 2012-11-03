@@ -2,31 +2,6 @@ module DAV4Rack
   module Carddav
     
     class AddressbookResource < AddressbookBaseResource
-
-      # The CardDAV spec requires that certain resources not be returned for an
-      # allprop request.  It's nice to keep a list of all the properties we support
-      # in the first place, so let's keep a separate list of the ones that need to
-      # be explicitly requested.
-      # ALL_PROPERTIES =  {
-      #   'DAV:' => %w(
-      #     current-user-privilege-set
-      #     supported-report-set
-      #   ),
-      #   "urn:ietf:params:xml:ns:carddav" => %w(
-      #     max-resource-size
-      #     supported-address-data
-      #   ),
-      #   'http://calendarserver.org/ns/' => %w( getctag )
-      # }
-
-      # EXPLICIT_PROPERTIES = {
-      #   'urn:ietf:params:xml:ns:carddav' => %w(
-      #     addressbook-description
-      #     max-resource-size
-      #     supported-collation-set
-      #     supported-address-data
-      #   )
-      # }
       
       define_properties('DAV:') do
         property('current-user-privilege-set') do
@@ -52,7 +27,12 @@ module DAV4Rack
         end
         
         property('resourcetype') do
-          '<resourcetype><D:collection /><C:addressbook xmlns:C="urn:ietf:params:xml:ns:carddav"/></resourcetype>'
+          <<-EOS
+            <resourcetype>
+              <D:collection />
+              <C:addressbook xmlns:C="urn:ietf:params:xml:ns:carddav"/>
+            </resourcetype>
+          EOS
         end
         
         property('displayname') do
@@ -111,7 +91,11 @@ module DAV4Rack
       
       define_properties('http://calendarserver.org/ns/') do
         property('getctag') do
-          "<APPLE1:getctag xmlns:APPLE1='http://calendarserver.org/ns/'>#{@address_book.updated_at.to_i}</APPLE1:getctag>"
+          <<-EOS
+            <APPLE1:getctag xmlns:APPLE1='http://calendarserver.org/ns/'>
+              #{@address_book.updated_at.to_i}
+            </APPLE1:getctag>
+          EOS
         end
       end
 

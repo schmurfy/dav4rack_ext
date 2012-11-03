@@ -1,81 +1,4 @@
-require_relative '../../../spec_helper'
-
-
-module HTTPTest
-  def serve_app(app)
-    @app = Rack::Test::Session.new(
-        Rack::MockSession.new(app)
-      )
-  end
-  
-  def request(method, url, opts = {})
-    @app.request(url, opts.merge(method: method))
-    @app.last_response
-  end
-  
-  def propfind(url, properties = :all, depth = 1)
-    namespaces = {
-      'DAV:' => 'D',
-      'urn:ietf:params:xml:ns:carddav' => 'C',
-      'http://calendarserver.org/ns/' => 'APPLE1'
-    }
-    
-    if properties == :all
-      body = "<D:allprop />"
-      
-    else
-      properties = properties.map do |(name, ns)|
-        ns_short = namespaces[ns]
-        raise "unknown namespace: #{ns}" unless ns_short
-        %.<#{ns_short}:#{name}/>.
-      end
-      
-      body = "<D:prop>#{properties.join("\n")}</D:prop>"
-    end
-    
-    
-    data = <<-EOS
-<?xml version="1.0" encoding="UTF-8"?>
-<D:propfind xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:carddav" xmlns:APPLE1="http://calendarserver.org/ns/">
-  #{body}
-</D:propfind>
-    EOS
-    
-    request('PROPFIND', url, input: data)
-  end
-  
-  def ensure_element_exists(response, expr, namespaces = {})
-    ret = Nokogiri::XML(response.body)
-    ret.css(expr, namespaces).tap{|elements| elements.should.not.be.empty? }
-  rescue Bacon::Error => err
-    raise Bacon::Error.new(err.count_as, "XML did not match: #{expr}")
-  end
-  
-  def ensure_element_does_not_exists(response, expr, namespaces = {})
-    ret = Nokogiri::XML(response.body)
-    ret.css(expr, namespaces).should.be.empty?
-  rescue Bacon::Error => err
-    raise Bacon::Error.new(err.count_as, "XML did match: #{expr}")
-  end
-  
-  def element_content(response, expr, namespaces = {})
-    ret = Nokogiri::XML(response.body)
-    elements = ret.css(expr, namespaces)
-    if elements.empty?
-      :missing
-    else
-      children = elements.first.element_children
-      if children.empty?
-        :empty
-      else
-        children.first.text
-      end
-    end
-  end
-end
-
-
-Bacon::Context.send(:include, HTTPTest)
+require_relative '../spec_helper'
 
 describe 'RFC 6352: CardDav' do
   
@@ -85,11 +8,10 @@ describe 'RFC 6352: CardDav' do
     
     @book = stub('AddressBook', id: '1', name: "A book", created_at: Time.now.iso8601, updated_at: Time.now.iso8601)
     @user = user = stub('User', username: 'john')
-    @toto = 43
     
     app = Rack::Builder.new do
-      # use XMLSniffer
-      run DAV4Rack::Carddav.app(current_user: user)
+      use XMLSniffer
+      run DAV4Rack::Carddav.app('/', current_user: user)
     end
     
     serve_app(app)
@@ -119,7 +41,7 @@ END:VCARD
     
     describe '[6.1] Address Book Support' do
       it '[6.1] advertise carddav support (MUST include addressbook in DAV header)' do
-        response = request(:options, '/carddav/')
+        response = request(:options, '/')
         response.headers['Dav'].must.include?('addressbook')
         response.status.should == 200
       end
@@ -128,7 +50,7 @@ END:VCARD
     describe '[6.2] AddressBook properties' do
     
       it '[6.2.1] CARDDAV:addressbook-description' do
-      #   request('/carddav/', method: 'OPTIONS')
+      #   request('/', method: 'OPTIONS')
       end
       
       it '[6.2.3] CARDDAV:max-resource-size' do
@@ -226,8 +148,9 @@ END:VCARD
   
   
   describe '[7] Address Book Access Control' do
+    
     it '[7.1.1] CARDDAV:addressbook-home-set Property' do
-      response = propfind('/carddav/', [
+      response = propfind('/', [
           ['addressbook-home-set', @carddav_ns]
         ])
             
@@ -237,13 +160,13 @@ END:VCARD
       value.should == '/book/'
       
       # should not be returned by all
-      response = propfind('/carddav/')
+      response = propfind('/')
       value = element_content(response, 'D|addressbook-home-set', 'D' => @carddav_ns)
       value.should == :missing
     end
     
     it '[7.1.2] CARDDAV:principal-address Property' do
-      response = propfind('/carddav/', [
+      response = propfind('/', [
           ['principal-address', @carddav_ns]
         ])
             

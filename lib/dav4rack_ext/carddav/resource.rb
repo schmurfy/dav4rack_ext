@@ -77,28 +77,6 @@ module DAV4Rack
         ary.include? other_path
       end
       
-      # BASE_PROPERTIES = {
-      #   'DAV:' => %w(
-      #     acl
-      #     acl-restrictions
-      #     creationdate
-      #     current-user-principal
-      #     current-user-privilege-set
-      #     displayname
-      #     getcontentlength
-      #     getcontenttype
-      #     getetag
-      #     getlastmodified
-      #     group
-      #     owner
-      #     principal-URL
-      #     resourcetype
-      #   ),
-      #   # Define this here as an empty array so it will fall through to dav4rack
-      #   # and they'll return a NotImplemented instead of BadRequest
-      #   'urn:ietf:params:xml:ns:carddav' => []
-      # }
-
       def get_property(element)
         name = element[:name]
         namespace = element[:ns_href]
@@ -123,35 +101,46 @@ module DAV4Rack
       define_properties('DAV:') do
         
         property(:acl) do
-          s="
-          <D:acl xmlns:D='DAV:'>
-            <D:ace>
-              <D:principal>
-                <D:href>/carddav/</D:href>
-              </D:principal>
-              <D:protected/>
-              <D:grant>
-              %s
-              </D:grant>
-            </D:ace>
-          </D:acl>"
-          s %= get_privileges_aggregate
+          <<-EOS
+            <D:acl xmlns:D='DAV:'>
+              <D:ace>
+                <D:principal>
+                  <D:href>#{options[:root]}</D:href>
+                </D:principal>
+                <D:protected/>
+                <D:grant>
+                  #{get_privileges_aggregate}
+                </D:grant>
+              </D:ace>
+            </D:acl>"
+          EOS
         end
         
         property('acl-restrictions') do
-          "<D:acl-restrictions xmlns:D='DAV:'><D:grant-only/><D:no-invert/></D:acl-restrictions>"
+          <<-EOS
+            <D:acl-restrictions xmlns:D='DAV:'>
+              <D:grant-only/><D:no-invert/>
+            </D:acl-restrictions>
+          EOS
         end
         
         # This violates the spec that requires an HTTP or HTTPS URL.  Unfortunately,
         # Apple's AddressBook.app treats everything as a pathname.  Also, the model
         # shouldn't need to know about the URL scheme and such.
         property('current-user-principal') do
-          "<D:current-user-principal xmlns:D='DAV:'><D:href>/carddav/</D:href></D:current-user-principal>"
+          <<-EOS
+            <D:current-user-principal xmlns:D='DAV:'>
+              <D:href>#{options[:root]}</D:href>
+            </D:current-user-principal>
+          EOS
         end
         
         property('current-user-privilege-set') do
-          s = '<D:current-user-privilege-set xmlns:D="DAV:">%s</D:current-user-privilege-set>'
-          s %= get_privileges_aggregate
+          <<-EOS
+            <D:current-user-privilege-set xmlns:D="DAV:">
+              #{get_privileges_aggregate}
+            </D:current-user-privilege-set>
+          EOS
         end
         
         property('group') do
@@ -159,19 +148,24 @@ module DAV4Rack
         end
 
         property('owner') do
-          "<D:owner xmlns:D='DAV:'><D:href>/carddav/</D:href></D:owner>"
+          <<-EOS
+            <D:owner xmlns:D='DAV:'>
+              <D:href>#{options[:root]}</D:href>
+            </D:owner>
+          EOS
         end
 
         property('principal-URL') do
-          "<D:principal-URL xmlns:D='DAV:'><D:href>/carddav/</D:href></D:principal-URL>"
+          <<-EOS
+            <D:principal-URL xmlns:D='DAV:'>
+              <D:href>#{options[:root]}</D:href>
+            </D:principal-URL>
+          EOS
         end
         
       end
 
-      # Some properties shouldn't be included in an allprop request
-      # but it's nice to do some sanity checking so keeping a list is good
       def properties
-        # TODO: test this
         selected_properties = self.class.properties.reject{|key, arr| arr[1] == true }
         ret = {}
         selected_properties.keys.map do |key|
