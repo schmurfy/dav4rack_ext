@@ -7,7 +7,7 @@ describe 'RFC 6352: CardDav' do
     @carddav_ns = "urn:ietf:params:xml:ns:carddav"
     
     @book = stub('AddressBook', id: '1', name: "A book", created_at: Time.now.iso8601, updated_at: Time.now.iso8601)
-    @user = user = stub('User', username: 'john')
+    @user = user = stub('User', username: 'john', created_at: Time.now, updated_at: Time.now)
     
     app = Rack::Builder.new do
       use XMLSniffer
@@ -278,6 +278,18 @@ END:VCARD
         
         # '*=' = include
         ensure_element_exists(response, %{D|href[text()*="1234-5678-9000-2"] + D|status[text()*="404"]}, 'D' => @dav_ns)
+        
+        
+        vcard = ensure_element_exists(response, %{D|href[text()*="1234-5678-9000-1"] + D|propstat > D|prop > C|address-data}, 'D' => @dav_ns, 'C' => @carddav_ns)
+        vcard.text.should.include? <<-EOS
+BEGIN:VCARD
+VERSION:3.0
+FN:Cyrus Daboo
+EMAIL;TYPE=INTERNET,PREF:cyrus@example.com
+NICKNAME:me
+UID:1234-5678-9000-1
+END:VCARD
+        EOS
       end
       
       should 'return an error with Depth != 0' do

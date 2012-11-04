@@ -37,13 +37,17 @@ module DAV4Rack
         name = element[:name]
         namespace = element[:ns_href]
         
+        element.each do |k, v|
+          p [k, v]
+        end
+        
         key = "#{namespace}*#{name}"
         
         handler = self.class.properties[key]
         if handler
-          ret = instance_eval(&handler[0])
+          ret = instance_exec(element, &handler[0])
           # TODO: find better than that
-          if ret && ret.include?('<')
+          if ret.is_a?(String) && ret.include?('<')
             Nokogiri::XML::DocumentFragment.parse(ret)
           else
             ret

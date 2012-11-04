@@ -2,13 +2,8 @@ module DAV4Rack
   module Carddav
     
     class AddressbookCollectionResource < AddressbookBaseResource
-
-      def setup
-        super
-      end
-
+      
       def exist?
-        # Rails.logger.error "ABCR::exist?(#{public_path});"
         return true
       end
 
@@ -17,7 +12,6 @@ module DAV4Rack
       end
 
       def children
-        Logger.debug "ABCR::children(#{public_path})"
         current_user.addressbooks.map do |book|
           child(book.id.to_s)
         end

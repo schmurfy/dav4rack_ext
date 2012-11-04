@@ -3,15 +3,7 @@ module DAV4Rack
     
     # This class has some stuff common to the address books, their collections, and contacts
     class AddressbookBaseResource < Resource
-      # def initialize(*)
-      #   super
-        # @contact_model_class = options[:contact_model]
-        # @addressbook_model_class = options[:addresbook_model]
-        
-        # raise ArgumentError, "missing contact_model" unless @contact_model_class
-        # raise ArgumentError, "missing addresbook_model" unless @addressbook_model_class
-      # end
-      
+          
       # name:: Name of child
       # Create a new child with the given name
       # NOTE:: Include trailing '/' if child is collection  

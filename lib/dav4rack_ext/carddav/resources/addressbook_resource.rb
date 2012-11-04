@@ -42,6 +42,12 @@ module DAV4Rack
         property('creationdate') do
           @address_book.created_at
         end
+        
+        property('getcontenttype') do
+          <<-EOS
+            <getcontenttype>httpd/unix-directory</getcontenttype>
+          EOS
+        end
 
         # property('getetag') do
         #   '"None"'
@@ -62,9 +68,9 @@ module DAV4Rack
           
           property('supported-address-data') do
             <<-EOS
-            <C:supported-address-data xmlns:C='urn:ietf:params:xml:ns:carddav'>
-              <C:address-data-type content-type='text/vcard' version='3.0' />
-            </C:supported-address-data>
+              <C:supported-address-data xmlns:C='urn:ietf:params:xml:ns:carddav'>
+                <C:address-data-type content-type='text/vcard' version='3.0' />
+              </C:supported-address-data>
             EOS
           end
 
@@ -81,9 +87,6 @@ module DAV4Rack
             
           end
           
-          property('supported-address-data') do
-            
-          end
         end
         
       end
@@ -120,15 +123,6 @@ module DAV4Rack
           Logger.debug "Trying to create this child (contact): #{c.uid.to_s}"
           child c.uid.to_s
         end
-      end
-      
-      
-      ## Properties follow in alphabetical order
-      protected
-
-      def content_type
-        # Not the right type, oh well
-        Mime::Type.lookup_by_extension(:dir).to_s
       end
       
     end

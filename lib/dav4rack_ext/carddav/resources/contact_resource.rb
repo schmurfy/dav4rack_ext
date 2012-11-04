@@ -19,7 +19,9 @@ module DAV4Rack
         end
 
         property('getcontenttype') do
-          Mime::Type.lookup_by_extension(:vcf).to_s
+          <<-EOS
+            <getcontenttype>text/vcard</getcontenttype>
+          EOS
         end
 
         property('getlastmodified') do
@@ -28,30 +30,11 @@ module DAV4Rack
       end
       
       define_properties('urn:ietf:params:xml:ns:carddav') do
-        property('address-data') do
-          # if fields.empty?
-            data = @contact.vcard.vcard
-          # else
-            # raise "unsupported"
-            
-            # data = %w(BEGIN:VCARD)
-            # fields.each do |f|
-            #   next if f[:name] != 'prop'
-            #   name = f[:attributes]['name']
-            #   case name.upcase
-            #   when 'VERSION'
-            #     data << 'VERSION:3.0'
-            #   when 'UID'
-            #     data << 'UID:%s' % @contact.uid
-            #   else
-            #     field = @contact.vcard.field(name)
-            #     data << field.to_s.strip unless field.nil?
-            #   end
-            # end
-            # data << 'END:VCARD'
-            # data = data.compact.join("\n")
-          # end
+        property('address-data') do |el|
           
+          fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
+          data = @contact.vcard.to_s(fields)
+                    
           <<-EOS
           <C:address-data xmlns:C="urn:ietf:params:xml:ns:carddav">
             <![CDATA[#{data}]]>

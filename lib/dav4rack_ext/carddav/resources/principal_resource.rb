@@ -38,6 +38,14 @@ module DAV4Rack
         property('displayname') do
           "<D:displayname>#{current_user.username}'s Principal Resource</<D:displayname>"
         end
+        
+        property('creationdate') do
+          current_user.created_at
+        end
+        
+        property('getlastmodified') do
+          current_user.updated_at
+        end
       end
       
       define_properties('urn:ietf:params:xml:ns:carddav') do
@@ -53,30 +61,6 @@ module DAV4Rack
           end
 
         end
-      end
-      
-
-
-
-
-      def creation_date
-        # TODO: There's probably a more efficient way to grab the oldest ctime
-        # Perhaps we should assume that the address book will never be newer than
-        # any of its constituent contacts?
-        # contact_ids = @addressbook_model_class.find_all_by_user_id(current_user.id).collect{|ab| ab.contacts.collect{|c| c.id}}.flatten
-        # Field.first(:order => 'created_at ASC', :conditions => ['contact_id IN (?)', contact_ids]).created_at
-        
-        # TODO: change this
-        Time.now
-      end
-
-      def last_modified
-        # address_books = AddressBook.find_all_by_user_id(current_user.id)
-        # contact_ids = address_books.collect{|ab| ab.contacts.collect{|c| c.id}}.flatten
-        # field = Field.first(:order => 'updated_at DESC', :conditions => ['contact_id IN (?)', contact_ids])
-        # return field.updated_at unless field.nil?
-        # return address_books.first.updated_at unless address_books.nil?
-        Time.now
       end
 
     end

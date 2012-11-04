@@ -185,58 +185,10 @@ logger = Logger.new($stdout, Logger::DEBUG)
 
 dav_extensions = ["access-control", "addressbook"]
 
-router = HttpRouter.new do |r|
 
-  r.add('/carddav/').to DAV4Rack::Handler.new(
-      :log_to                   => logger,
-      :dav_extensions           => dav_extensions,
-      :alway_include_dav_header => true,
-      :pretty_xml               => true,
-      :root                     => '/carddav',
-      :root_uri_path            => '/carddav',
-      :resource_class           => DAV4Rack::Carddav::PrincipalResource,
-      :current_user             => current_user
-    )
-  
-  r.add('/book/:book_id/:contact_id(.vcf)').to DAV4Rack::Handler.new(
-      :log_to                   => logger,
-      :dav_extensions           => dav_extensions,
-      :alway_include_dav_header => true,
-      :pretty_xml               => true,
-      :root                     => '/book',
-      :root_uri_path            => '/book',
-      :resource_class           => DAV4Rack::Carddav::ContactResource,
-      :addresbook_model         => AddressBook,
-      :contact_model            => Contact,
-      :current_user             => current_user
-    )
-  
-  r.add('/book/:book_id').to DAV4Rack::Handler.new(
-      :additional_verbs         => ['report'],
-      :log_to                   => logger,
-      :dav_extensions           => dav_extensions,
-      :alway_include_dav_header => true,
-      :pretty_xml               => true,
-      :root                     => '/book',
-      :root_uri_path            => '/book',
-      :resource_class           => DAV4Rack::Carddav::AddressbookResource,
-      :addresbook_model         => AddressBook,
-      :contact_model            => Contact,
-      :current_user             => current_user
-    )
-  
-  r.add('/book/').to DAV4Rack::Handler.new(
-      :log_to                   => logger,
-      :dav_extensions           => dav_extensions,
-      :alway_include_dav_header => true,
-      :pretty_xml               => true,
-      :root                     => '/book',
-      :root_uri_path            => '/book',
-      :resource_class           => DAV4Rack::Carddav::AddressbookCollectionResource,
-      :addresbook_model         => AddressBook,
-      :contact_model            => Contact,
-      :current_user             => current_user
-    )
-end
+run DAV4Rack::Carddav.app('/',
+    logger: logger,
+    current_user: current_user
+  )
 
-run router
+
