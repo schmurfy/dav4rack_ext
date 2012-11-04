@@ -29,14 +29,14 @@ module DAV4Rack
         end
       end
       
-      define_properties('urn:ietf:params:xml:ns:carddav') do
+      define_properties(CARDAV_NS) do
         property('address-data') do |el|
           
           fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
           data = @contact.vcard.to_s(fields)
                     
           <<-EOS
-          <C:address-data xmlns:C="urn:ietf:params:xml:ns:carddav">
+          <C:address-data xmlns:C="#{CARDAV_NS}">
             <![CDATA[#{data}]]>
           </C:address-data>
           EOS

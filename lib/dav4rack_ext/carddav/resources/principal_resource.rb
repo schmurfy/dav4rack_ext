@@ -48,10 +48,14 @@ module DAV4Rack
         end
       end
       
-      define_properties('urn:ietf:params:xml:ns:carddav') do
+      define_properties(CARDAV_NS) do
         explicit do
           property('addressbook-home-set') do
-            "<C:addressbook-home-set xmlns:C='urn:ietf:params:xml:ns:carddav'><D:href xmlns:D='DAV:'>/book/</D:href></C:addressbook-home-set>"
+            <<-EOS
+              <C:addressbook-home-set xmlns:C='#{CARDAV_NS}'>
+                <D:href xmlns:D='DAV:'>/book/</D:href>
+              </C:addressbook-home-set>"
+            EOS
           end
           
           # TODO: should return the user's card url

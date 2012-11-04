@@ -3,6 +3,8 @@ module DAV4Rack
     
     class Resource < DAV4Rack::Resource
       extend Helpers::Properties
+      
+      CARDAV_NS = 'urn:ietf:params:xml:ns:carddav'.freeze
 
       PRIVILEGES = %w(read read-acl read-current-user-privilege-set)
       
@@ -21,7 +23,7 @@ module DAV4Rack
       def setup
         @propstat_relative_path = true
         @root_xml_attributes = {
-          'xmlns:C' => 'urn:ietf:params:xml:ns:carddav', 
+          'xmlns:C' => CARDAV_NS, 
           'xmlns:APPLE1' => 'http://calendarserver.org/ns/'
         }
       end

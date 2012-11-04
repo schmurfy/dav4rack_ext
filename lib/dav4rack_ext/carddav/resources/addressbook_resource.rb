@@ -20,7 +20,7 @@ module DAV4Rack
           s = "<supported-report-set>%s</supported-report-set>"
           
           reports_aggregate = reports.inject('') do |ret, report|
-            ret << "<report><C:%s xmlns:C='urn:ietf:params:xml:ns:carddav'/></report>" % report
+            ret << "<report><C:%s xmlns:C='#{CARDAV_NS}'/></report>" % report
           end
           
           s % reports_aggregate
@@ -30,7 +30,7 @@ module DAV4Rack
           <<-EOS
             <resourcetype>
               <D:collection />
-              <C:addressbook xmlns:C="urn:ietf:params:xml:ns:carddav"/>
+              <C:addressbook xmlns:C="#{CARDAV_NS}"/>
             </resourcetype>
           EOS
         end
@@ -60,7 +60,7 @@ module DAV4Rack
       end
       
       
-      define_properties('urn:ietf:params:xml:ns:carddav') do
+      define_properties(CARDAV_NS) do
         explicit do
           property('max-resource-size') do
             1024
@@ -68,7 +68,7 @@ module DAV4Rack
           
           property('supported-address-data') do
             <<-EOS
-              <C:supported-address-data xmlns:C='urn:ietf:params:xml:ns:carddav'>
+              <C:supported-address-data xmlns:C='#{CARDAV_NS}'>
                 <C:address-data-type content-type='text/vcard' version='3.0' />
               </C:supported-address-data>
             EOS
