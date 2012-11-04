@@ -37,10 +37,6 @@ module DAV4Rack
         name = element[:name]
         namespace = element[:ns_href]
         
-        element.each do |k, v|
-          p [k, v]
-        end
-        
         key = "#{namespace}*#{name}"
         
         handler = self.class.properties[key]

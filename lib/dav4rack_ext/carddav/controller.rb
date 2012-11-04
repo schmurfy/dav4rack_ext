@@ -88,9 +88,7 @@ module DAV4Rack
 
                 path = File.split(URI.parse(_href).path).last
                 Logger.debug "Creating child w/ ORIG=#{resource.public_path} HREF=#{_href} FILE=#{path}!"
-
-                # TODO: Write a test to cover asking for a report expecting contact objects but given an address book path
-                # Yes, CardDAVMate does this.
+                
                 cur_resource = resource.is_self?(_href) ? resource : resource.child(File.split(path).last)
 
                 if cur_resource.exist?

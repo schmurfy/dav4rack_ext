@@ -121,8 +121,12 @@ module DAV4Rack
         Logger.debug "ABR::children(#{public_path})"
         @address_book.contacts.collect do |c|
           Logger.debug "Trying to create this child (contact): #{c.uid.to_s}"
-          child c.uid.to_s
+          child(c.uid.to_s)
         end
+      end
+      
+      def child(name)
+        super(ContactResource, name)
       end
       
     end

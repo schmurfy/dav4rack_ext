@@ -17,6 +17,10 @@ module DAV4Rack
         end
       end
       
+      def child(name)
+        super(AddressbookResource, name)
+      end
+      
     end
     
   end
