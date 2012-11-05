@@ -1,7 +1,7 @@
 module DAV4Rack
   module Carddav
     
-    class AddressbookResource < AddressbookBaseResource
+    class AddressbookResource < Resource
       
       define_properties('DAV:') do
         property('current-user-privilege-set') do

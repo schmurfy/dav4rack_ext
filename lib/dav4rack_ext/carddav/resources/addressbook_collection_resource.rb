@@ -1,7 +1,7 @@
 module DAV4Rack
   module Carddav
     
-    class AddressbookCollectionResource < AddressbookBaseResource
+    class AddressbookCollectionResource < Resource
       
       def exist?
         return true

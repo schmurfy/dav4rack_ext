@@ -3,7 +3,7 @@ require 'vcard_parser'
 module DAV4Rack
   module Carddav
     
-    class ContactResource < AddressbookBaseResource
+    class ContactResource < Resource
       
       define_properties('DAV:') do
         property('getetag') do
