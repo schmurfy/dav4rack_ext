@@ -19,7 +19,7 @@ class XMLSniffer
     dump_xml(request.body.read)
     request.body.rewind
     
-    unless ret[2].body.empty?
+    if ret[2].respond_to?(:body) && !ret[2].body.empty?
       puts "\n*** RESPONSE (#{ret[0]}) ***"
       ret[1].each do |name, value|
         puts "#{name} = #{value}"

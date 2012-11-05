@@ -6,8 +6,8 @@ module Testing
   class DummyBase
     include Virtus
     
-    attribute :updated_at, Time
-    attribute :created_at, Time
+    attribute :updated_at, Time, default: Time.now
+    attribute :created_at, Time, default: Time.now
     
   end
 
@@ -34,6 +34,7 @@ module Testing
     
     def update_from_vcard(vcf)
       raise "invalid uid" unless vcf['UID'].value == uid
+      self.updated_at = Time.now
       
       # TODO: addressbook rename fields
       
@@ -98,6 +99,10 @@ module Testing
       Contact.new(uid: uid).tap do |c|
         contacts << c
       end
+    end
+    
+    def updated_at
+      Time.now.to_i
     end
     
   end

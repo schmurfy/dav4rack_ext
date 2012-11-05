@@ -10,7 +10,7 @@ module HTTPTest
     @app.last_response
   end
   
-  def propfind(url, properties = :all, depth = 1)
+  def propfind(url, properties = :all, opts = {})
     namespaces = {
       'DAV:' => 'D',
       'urn:ietf:params:xml:ns:carddav' => 'C',
@@ -38,7 +38,7 @@ module HTTPTest
 </D:propfind>
     EOS
     
-    request('PROPFIND', url, input: data)
+    request('PROPFIND', url, opts.merge(input: data))
   end
   
   def ensure_element_exists(response, expr, namespaces = {'D' => 'DAV:'})

@@ -19,6 +19,15 @@ module DAV4Rack
           )
       end
       
+      def user_agent
+        env = options[:env]
+        if env
+          env['HTTP_USER_AGENT'] || ""
+        else
+          ""
+        end
+      end
+      
       def router_params
         env = options[:env]
         if env

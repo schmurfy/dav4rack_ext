@@ -26,10 +26,12 @@ module DAV4Rack
           # "<D:group-membership-set xmlns:D='DAV:' />"
         end
         
+        # iOS 6.0 expect "/
+        # UA: iOS/6.0 (10A403) Preferences/1.0
         property('principal-URL') do
           <<-EOS
             <D:principal-URL xmlns:D='DAV:'>
-              <D:href>#{options[:root_uri_path]}</D:href>
+              <D:href>#{principal_uri}</D:href>
             </D:principal-URL>
           EOS
         end
@@ -37,6 +39,7 @@ module DAV4Rack
         # This violates the spec that requires an HTTP or HTTPS URL.  Unfortunately,
         # Apple's AddressBook.app treats everything as a pathname.  Also, the model
         # shouldn't need to know about the URL scheme and such.
+        # iOS 6.0 expect /
         property('current-user-principal') do
           <<-EOS
             <D:current-user-principal xmlns:D='DAV:'>
@@ -108,6 +111,15 @@ module DAV4Rack
             ""
           end
 
+        end
+      end
+    
+    private
+      def principal_uri
+        if user_agent.start_with?("iOS/6.0")
+          '/'
+        else
+          options[:root_uri_path]
         end
       end
 

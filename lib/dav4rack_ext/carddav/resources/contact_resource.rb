@@ -77,11 +77,10 @@ module DAV4Rack
         vcf = vcards[0]
 
         uid = vcf['UID'].value
-        raise BadRequest if uid =~ /\./ # Yeah, this'll break our routes.
 
-        # Check for If-None-Match: *
-        # Section: 6.3.2
-        # If set, client does not want to clobber; error if contact present
+        # [6.3.2] Check for If-None-Match: *
+        # If set, client does want to create a new contact only, raise an error
+        # if contact already exists
         want_new_contact = (request.env['HTTP_IF_NONE_MATCH'] == '*')
         
         @contact = current_user.find_contact(uid)
@@ -96,7 +95,6 @@ module DAV4Rack
           @contact = @address_book.create_contact(uid)
         end
 
-        # Otherwise let's update it
         @contact.update_from_vcard(vcf)
 
         if @contact.save
