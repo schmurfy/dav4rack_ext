@@ -1,3 +1,4 @@
+require 'ox'
 require 'rack/request'
 require 'coderay'
 
@@ -19,14 +20,14 @@ class XMLSniffer
     request.body.rewind
     
     unless ret[2].body.empty?
-      puts "\n*** RESPONSE ***"
+      puts "\n*** RESPONSE (#{ret[0]}) ***"
       ret[1].each do |name, value|
         puts "#{name} = #{value}"
       end
       
       dump_xml(ret[-1].body[0])
     else
-      puts "\n*** EMPTY RESPONSE ***"
+      puts "\n*** EMPTY RESPONSE (#{ret[0]}) ***"
     end
     
     ret
@@ -40,8 +41,12 @@ private
   end
 
   def dump_xml(str)
+    doc = Ox.parse(str)
+    source = Ox.dump(doc)
     puts ""
-    puts CodeRay.scan(str, :xml).term
+    puts CodeRay.scan(source, :xml).term
+  rescue SyntaxError
+    puts "Unable to parse XML:\n#{str}"
   end
   
   def extract_headers(env)

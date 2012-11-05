@@ -19,9 +19,7 @@ module DAV4Rack
         end
 
         property('getcontenttype') do
-          <<-EOS
-            <getcontenttype>text/vcard</getcontenttype>
-          EOS
+          "text/vcard"
         end
 
         property('getlastmodified') do
@@ -57,18 +55,13 @@ module DAV4Rack
       
       def setup
         super
-
+        
+        book_path = router_params[:book_id]
+        @address_book = options[:_parent_] || current_user.find_addressbook(book_path)
+        
         path_str = @public_path.dup
-        @address_book = current_user.find_addressbook(@book_path)
-
-        # uid = File.split(path_str).last
         uid = File.basename(path_str, '.vcf')
-        # if uid.end_with?('.vcf')
-        #   @book_path.slice!(0..-5)
-        # end
-
-        @contact = current_user.find_contact(uid)
-        # raise "Unable to find contact with #{uid}" unless @contact
+        @contact = options[:_object_] || @address_book.find_contact(uid)
         
       end
 
@@ -107,7 +100,8 @@ module DAV4Rack
         @contact.update_from_vcard(vcf)
 
         if @contact.save
-          @public_path = "/book/#{@address_book.id}/#{@contact.uid}"
+          @public_path = File.join(@address_book.path, @contact.uid)
+          # @public_path = "/book/#{@address_book.id}/#{@contact.uid}"
           response['ETag'] = @contact.etag
           Created
         else
@@ -121,7 +115,7 @@ module DAV4Rack
         # Rails.logger.error "Contact::Parent FOR: #{@public_path}"
         elements = File.split(@public_path)
         return nil if (elements.first == '/book')
-        AddressbookResource.new(elements.first, elements.first, @request, @response, @options.merge(:user => @user))
+        AddressbookResource.new(elements.first, elements.first, @request, @response, @options)
       end
       
       def get(request, response)

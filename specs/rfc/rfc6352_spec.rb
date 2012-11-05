@@ -5,9 +5,9 @@ describe 'RFC 6352: CardDav' do
   before do
     @dav_ns = "DAV:"
     @carddav_ns = "urn:ietf:params:xml:ns:carddav"
-    
-    @book = stub('AddressBook', id: '1', name: "A book", created_at: Time.now.iso8601, updated_at: Time.now.iso8601)
-    @user = user = stub('User', username: 'john', created_at: Time.now, updated_at: Time.now)
+      
+    @book = FactoryGirl.build(:book, path: 'castor', name: "A book")
+    @user = user = FactoryGirl.build(:user, login: 'john', addressbooks: [@book])
     
     app = Rack::Builder.new do
       use XMLSniffer
@@ -75,11 +75,8 @@ END:VCARD
         end
         
         should 'create contact' do
-          @user.expects(:find_addressbook).with('1').returns(@book).times(3) # why so many ???
-          @user.expects(:find_contact).with('45GT-JUKL').returns(nil)
-          
-          contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'ETAG')
-          @user.expects(:find_contact).with('1234-5678-9000-1').returns(nil) # Conflict test
+          contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+          contact.stubs(:etag).returns('ETAG')
           
           @book.expects(:create_contact).returns(contact)
           contact.expects(:update_from_vcard).with do |card|
@@ -87,7 +84,8 @@ END:VCARD
           end
           contact.expects(:save).returns(true)
           
-          response = request(:put, '/book/1/45GT-JUKL.vcf', @headers.merge(input: @vcard_raw))
+          # the url does not need to match the UID
+          response = request(:put, '/books/castor/new.vcf', @headers.merge(input: @vcard_raw))
           # 6.3.2.3
           response.headers['ETag'].should == "ETAG"
           
@@ -95,13 +93,12 @@ END:VCARD
         end
         
         should 'return an error if contact exists' do
-          @user.expects(:find_addressbook).with('1').returns(@book).times(3) # why so many ???
-          @user.expects(:find_contact).with('45GT-JUKL').returns(nil)
+          contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+          contact.stubs(:etag).returns('ETAG')
           
-          contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'ETAG')
-          @user.expects(:find_contact).with('1234-5678-9000-1').returns(contact) # Conflict test
-                  
-          response = request(:put, '/book/1/45GT-JUKL.vcf', @headers.merge(input: @vcard_raw))
+          @book.contacts << contact
+          
+          response = request(:put, '/books/castor/new.vcf', @headers.merge(input: @vcard_raw))
           response.status.should == 409 # Conflict
         end
         
@@ -127,10 +124,13 @@ END:VCARD
         
         describe '[6.3.2.3] Address Object Resource Entity Tag' do
           should 'set Etag header on GET' do
-            contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'CONTACT-ETAG', vcard: @parsed_vcard)
-            @user.expects(:find_addressbook).with('1').returns(@book)
-            @user.expects(:find_contact).with('1234-5678-9000-1').returns(contact)
-            response = request(:get, '/book/1/1234-5678-9000-1.vcf')
+            contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+            contact.stubs(:etag).returns('CONTACT-ETAG')
+            contact.expects(:vcard).returns(@parsed_vcard)
+            
+            @book.contacts << contact
+            
+            response = request(:get, '/books/castor/1234-5678-9000-1.vcf')
             response.status.should == 200
             response.headers['ETag'].should == "CONTACT-ETAG"
           end
@@ -157,7 +157,7 @@ END:VCARD
       response.status.should == 207
       
       value = element_content(response, 'D|addressbook-home-set', 'D' => @carddav_ns)
-      value.should == '/book/'
+      value.should == '/books/'
       
       # should not be returned by all
       response = propfind('/')
@@ -183,45 +183,34 @@ END:VCARD
   
   describe '[8] Address Book Reports' do
     should 'advertise supported reports (REPORT method)' do
-      contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'CONTACT-ETAG', vcard: @parsed_vcard)
+      contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+      contact.stubs(:etag).returns('CONTACT-ETAG')
+      contact.stubs(:vcard).returns(@parsed_vcard)
       
-      @book.expects(:contacts).returns([contact])
-      @user.expects(:find_contact).with('1234-5678-9000-1').returns(contact) # wtf ?
-      @user.expects(:find_addressbook).with('1').returns(@book).twice
+      @book.contacts << contact
       
-      @user.expects(:addressbooks).returns([@book])
-      
-      response = propfind('/book/', [
+      response = propfind('/books/', [
           ['supported-report-set', @dav_ns]
         ])
       
-      # I hate xml !
-      # TODO: find how the hell I can test what I want with nokogiri which is this:
-      # <D:supported-report-set>
-      #   <D:report>
-      #     <C:addressbook-multiget/>
-      #   </D:report>
-      #   <D:report>
-      #     <C:addressbook-query/>
-      #   </D:report>
-      # </D:supported-report-set>
-      value = element_content(response, 'D|addressbook-multiget', 'D' => @carddav_ns)
-      value.should == :empty
+      elements = ensure_element_exists(response, 'D|supported-report-set > D|report > C|addressbook-multiget',
+          'D' => @dav_ns, 'C' => @carddav_ns
+        )
+      elements[0].text.should == ""
     end
     
     
     describe '[8.3.1] CARDDAV:supported-collation-set Property' do
       before do
-        @contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'CONTACT-ETAG', vcard: @parsed_vcard,
-            created_at: Time.now.iso8601, updated_at: Time.now.iso8601
-          )
-        @user.expects(:find_addressbook).with('1').returns(@book).twice
-        @book.expects(:contacts).returns([@contact])
-        @user.expects(:find_contact).with('1234-5678-9000-1').returns(@contact) # wtf ?
+        @contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+        @contact.stubs(:etag).returns('CONTACT-ETAG')
+        @contact.stubs(:vcard).returns(@parsed_vcard)
+        
+        @book.contacts << @contact
       end
       
       should 'return supported collations' do
-        response = propfind('/book/1', [
+        response = propfind('/books/castor', [
             ['supported-collation-set', @carddav_ns]
           ])
         
@@ -231,7 +220,7 @@ END:VCARD
         
       should 'not be returned in allprop query' do
         # should not be returned by all
-        response = propfind('/book/1')
+        response = propfind('/books/castor')
         
         ensure_element_does_not_exists(response, 'D|supported-collation-set', 'D' => @carddav_ns)
       end
@@ -244,9 +233,8 @@ END:VCARD
     
     describe '[8.7] CARDDAV:addressbook-multiget Report' do
       before do
-        @contact = stub('Contact', uid: '1234-5678-9000-1', etag: 'CONTACT-ETAG', vcard: @parsed_vcard,
-            created_at: Time.now.iso8601, updated_at: Time.now.iso8601
-          )
+        @contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+        @contact.stubs(:vcard).returns(@parsed_vcard)
 
         
         @raw_query = <<-EOS
@@ -262,18 +250,16 @@ END:VCARD
        <C:prop name="FN"/>
      </C:address-data>
    </D:prop>
-   <D:href>/book/1/1234-5678-9000-1.vcf</D:href>
-   <D:href>/book/1/1234-5678-9000-2.vcf</D:href>
+   <D:href>/books/castor/1234-5678-9000-1.vcf</D:href>
+   <D:href>/books/castor/1234-5678-9000-2.vcf</D:href>
  </C:addressbook-multiget>
         EOS
       end
       
       should 'return multiple cards' do
-        @user.expects(:find_addressbook).with('1').returns(@book).times(3) # TODO: 1
-        @user.expects(:find_contact).with('1234-5678-9000-1').returns(@contact)
-        @user.expects(:find_contact).with('1234-5678-9000-2').returns(nil)
-        
-        response = request(:report, "/book/1", input: @raw_query, 'HTTP_DEPTH' => '0')
+        @book.contacts << @contact
+                
+        response = request(:report, "/books/castor", input: @raw_query, 'HTTP_DEPTH' => '0')
         response.status.should == 207
         
         # '*=' = include
@@ -293,9 +279,7 @@ END:VCARD
       end
       
       should 'return an error with Depth != 0' do
-        @user.expects(:find_addressbook).with('1').returns(@book)
-        
-        response = request(:report, "/book/1", input: @raw_query, 'HTTP_DEPTH' => '2')
+        response = request(:report, "/books/castor", input: @raw_query, 'HTTP_DEPTH' => '2')
         response.status.should == 400
         
         ensure_element_exists(response, 'D|error > D|invalid-depth', 'D' => @dav_ns)

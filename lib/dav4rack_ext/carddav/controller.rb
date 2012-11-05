@@ -2,6 +2,10 @@ module DAV4Rack
   module Carddav
     
     class Controller < DAV4Rack::Controller
+      def initialize(*args, options, env)
+        super(*args, options.merge(env: env))
+      end
+      
       def report
         unless resource.exist?
           return NotFound
@@ -89,9 +93,9 @@ module DAV4Rack
                 path = File.split(URI.parse(_href).path).last
                 Logger.debug "Creating child w/ ORIG=#{resource.public_path} HREF=#{_href} FILE=#{path}!"
                 
-                cur_resource = resource.is_self?(_href) ? resource : resource.child(File.split(path).last)
+                cur_resource = resource.is_self?(_href) ? resource : resource.find_child(File.split(path).last)
 
-                if cur_resource.exist?
+                if cur_resource && cur_resource.exist?
                   propstats(xml, get_properties(cur_resource, props))
                 else
                   xml.status "#{http_version} #{NotFound.status_line}"

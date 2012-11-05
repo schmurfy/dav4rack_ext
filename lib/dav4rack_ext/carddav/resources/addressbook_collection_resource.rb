@@ -13,7 +13,7 @@ module DAV4Rack
 
       def children
         current_user.addressbooks.map do |book|
-          child(book.id.to_s)
+          child(book)
         end
       end
       

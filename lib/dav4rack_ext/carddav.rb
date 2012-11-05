@@ -1,5 +1,6 @@
 require 'dav4rack'
 
+require_relative 'handler'
 require_relative 'helpers/properties'
 
 require_relative 'carddav/controller'

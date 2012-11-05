@@ -23,6 +23,7 @@ require 'bacon/ext/mocha'
 
 
 require_relative '../example/rack_sniffer'
+require_relative 'support/models'
 require_relative 'support/http'
 require_relative 'factories'
 

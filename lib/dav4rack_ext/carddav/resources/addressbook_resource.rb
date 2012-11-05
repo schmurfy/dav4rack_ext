@@ -104,8 +104,8 @@ module DAV4Rack
 
       def setup
         super
-        @address_book = current_user.find_addressbook(@book_path)
-        # @address_book = @addressbook_model_class.find_by_id_and_user_id(@book_path, current_user.id)
+        book_path = router_params[:book_id]
+        @address_book = options[:_object_] || current_user.find_addressbook(book_path)
       end
 
       def exist?
@@ -121,12 +121,18 @@ module DAV4Rack
         Logger.debug "ABR::children(#{public_path})"
         @address_book.contacts.collect do |c|
           Logger.debug "Trying to create this child (contact): #{c.uid.to_s}"
-          child(c.uid.to_s)
+          child(ContactResource, c, @address_book)
         end
       end
-      
-      def child(name)
-        super(ContactResource, name)
+            
+      def find_child(uid)
+        uid = File.basename(uid, '.vcf')
+        c = @address_book.find_contact(uid)
+        if c
+          child(ContactResource, c)
+        else
+          nil
+        end
       end
       
     end

@@ -7,15 +7,16 @@ gem 'dav4rack', path: '/Users/schmurfy/Dev/personal/dav4rack'
 
 group(:example) do
   gem 'thin'
-  gem 'virtus'
   gem 'shotgun'
   gem 'coderay'
+  gem 'ox'
 end
 
 group(:test) do
   gem 'schmurfy-bacon', path: '/Users/schmurfy/Dev/personal/gems/bacon'
   gem 'mocha',          '~> 0.10.0'
   gem 'factory_girl',   '~> 4.0'
+  gem 'virtus'
   
   gem 'simplecov'
   gem 'guard'
