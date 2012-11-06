@@ -46,7 +46,7 @@ private
     puts ""
     puts CodeRay.scan(source, :xml).term
   rescue SyntaxError
-    puts "Unable to parse XML:\n#{str}"
+    puts "\n#{str}"
   end
   
   def extract_headers(env)

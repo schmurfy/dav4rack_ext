@@ -8,6 +8,23 @@ require File.expand_path('../../specs/support/models', __FILE__)
 
 use XMLSniffer
 
+class PrefixCatcher
+  
+  REGEXP = %r{/(?<prefix>[^/]+/())}
+  
+  def initialize(app)
+    @app = app
+  end
+  
+  def call(env)
+    p env['REQUEST_PATH']
+    
+    @app.call(env)
+  end
+end
+
+use PrefixCatcher
+
 contacts = [
   Testing::Contact.new(uid: "12", fields: [
     Testing::Field.new(name: "N", value: "Durand;Christophe;;;"),
@@ -30,11 +47,16 @@ app1 = DAV4Rack::Carddav.app('/cards/',
     current_user: USER
   )
 
-app2 = DAV4Rack::Carddav.app('/',
+app2 = DAV4Rack::Carddav.app('/:prefix/cards/',
     logger: Logger.new($stdout, Logger::DEBUG),
-    current_user: USER
+    current_user: USER,
+    root_uri_path: lambda do |env|
+      path = env['REQUEST_PATH']
+      n = path.index("/cards/")
+      path[0...(n + 7)]
+    end
   )
 
-run Rack::Cascade.new([app1])
+run Rack::Cascade.new([app2])
 
 

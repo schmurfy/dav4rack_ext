@@ -43,7 +43,7 @@ module DAV4Rack
         property('current-user-principal') do
           <<-EOS
             <D:current-user-principal xmlns:D='DAV:'>
-              <D:href>#{options[:root_uri_path]}</D:href>
+              <D:href>#{root_uri_path}</D:href>
             </D:current-user-principal>
           EOS
         end
@@ -53,7 +53,7 @@ module DAV4Rack
             <D:acl xmlns:D='DAV:'>
               <D:ace>
                 <D:principal>
-                  <D:href>#{options[:root_uri_path]}</D:href>
+                  <D:href>#{root_uri_path}</D:href>
                 </D:principal>
                 <D:protected/>
                 <D:grant>
@@ -100,7 +100,7 @@ module DAV4Rack
           property('addressbook-home-set') do
             <<-EOS
               <C:addressbook-home-set xmlns:C='#{CARDAV_NS}'>
-                <D:href xmlns:D='DAV:'>#{options[:books_collection]}</D:href>
+                <D:href xmlns:D='DAV:'>#{books_collection_url}</D:href>
               </C:addressbook-home-set>
             EOS
           end
@@ -119,8 +119,12 @@ module DAV4Rack
         if user_agent.start_with?("iOS/6.0")
           '/'
         else
-          options[:root_uri_path]
+          root_uri_path
         end
+      end
+      
+      def books_collection_url
+        File.join(root_uri_path, options[:books_collection])
       end
 
     end

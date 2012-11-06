@@ -31,7 +31,12 @@ module DAV4Rack
       
       
     private
-
+      
+      def root_uri_path
+        tmp = @options[:root_uri_path]
+        tmp.respond_to?(:call) ? tmp.call(@options[:env]) : tmp
+      end
+      
       def xpath_element(name, ns_uri=:dav)
         case ns_uri
         when :dav

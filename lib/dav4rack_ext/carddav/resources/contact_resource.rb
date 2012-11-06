@@ -56,12 +56,8 @@ module DAV4Rack
       def setup
         super
         
-        book_path = router_params[:book_id]
-        @address_book = options[:_parent_] || current_user.find_addressbook(book_path)
-        
-        path_str = @public_path.dup
-        uid = File.basename(path_str, '.vcf')
-        @contact = options[:_object_] || @address_book.find_contact(uid)
+        @address_book = options[:_parent_] || current_user.find_addressbook(router_params)
+        @contact = options[:_object_] || @address_book.find_contact(router_params[:contact_id])
         
       end
 
@@ -83,7 +79,7 @@ module DAV4Rack
         # if contact already exists
         want_new_contact = (request.env['HTTP_IF_NONE_MATCH'] == '*')
         
-        @contact = current_user.find_contact(uid)
+        @contact = @address_book.find_contact(uid)
 
         # If the client has explicitly stated they want a new contact
         raise Conflict if (want_new_contact and @contact)

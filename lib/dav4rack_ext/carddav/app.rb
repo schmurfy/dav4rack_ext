@@ -8,6 +8,7 @@ module DAV4Rack
     def self.app(root_path = '/', opts = {})
       logger = opts.delete(:logger) || ::Logger.new('/dev/null')
       current_user = opts.delete(:current_user)
+      root_uri_path = opts.delete(:root_uri_path) || root_path
       
       if root_path[-1] != '/'
         root_path << '/'
@@ -22,14 +23,13 @@ module DAV4Rack
             :dav_extensions           => DAV_EXTENSIONS,
             :alway_include_dav_header => true,
             :pretty_xml               => true,
-            # :root                     => root_path,
-            :root_uri_path            => root_path,
+            :root_uri_path            => root_uri_path,
             :resource_class           => DAV4Rack::Carddav::PrincipalResource,
             :controller_class         => DAV4Rack::Carddav::Controller,
             :current_user             => current_user,
             
             # resource options
-            :books_collection         => "#{root_path}books/"
+            :books_collection         => "/books/"
           )
         
         r.add("#{root_path}books/").to DAV4RackExt::Handler.new(
@@ -37,8 +37,7 @@ module DAV4Rack
             :dav_extensions           => DAV_EXTENSIONS,
             :alway_include_dav_header => true,
             :pretty_xml               => true,
-            # :root                     => '/book',
-            # :root_uri_path            => '/book',
+            :root_uri_path            => root_uri_path,
             :resource_class           => DAV4Rack::Carddav::AddressbookCollectionResource,
             :controller_class         => DAV4Rack::Carddav::Controller,
             :current_user             => current_user
@@ -49,8 +48,7 @@ module DAV4Rack
             :dav_extensions           => DAV_EXTENSIONS,
             :alway_include_dav_header => true,
             :pretty_xml               => true,
-            # :root                     => '/book',
-            # :root_uri_path            => '/book',
+            :root_uri_path            => root_uri_path,
             :resource_class           => DAV4Rack::Carddav::ContactResource,
             :controller_class         => DAV4Rack::Carddav::Controller,
             :current_user             => current_user
@@ -61,8 +59,7 @@ module DAV4Rack
             :dav_extensions           => DAV_EXTENSIONS,
             :alway_include_dav_header => true,
             :pretty_xml               => true,
-            # :root                     => '/book',
-            # :root_uri_path            => '/book',
+            :root_uri_path            => root_uri_path,
             :resource_class           => DAV4Rack::Carddav::AddressbookResource,
             :controller_class         => DAV4Rack::Carddav::Controller,
             :current_user             => current_user

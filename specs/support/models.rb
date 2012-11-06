@@ -113,13 +113,11 @@ module Testing
     attribute :login, String
     attribute :addressbooks, Array[AddressBook], default: []
     
-    def find_addressbook(path)
+    def find_addressbook(opts)
+      path = opts[:book_id] || raise("book_id is missing: #{opts}")
       addressbooks.detect{|b| b.path == path }
     end
     
-    def find_contact(uid)
-      addressbooks.map(&:contacts).flatten(1).detect{|c| c.uid == uid.to_s }
-    end
   end
   
 end

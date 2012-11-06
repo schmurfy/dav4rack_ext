@@ -27,14 +27,9 @@ module DAV4Rack
           ""
         end
       end
-      
+            
       def router_params
-        env = options[:env]
-        if env
-          env['router.params']
-        else
-          {}
-        end
+        env['router.params'] || {}
       end
       
       def setup
@@ -91,7 +86,7 @@ module DAV4Rack
         property('owner') do
           <<-EOS
             <D:owner xmlns:D='DAV:'>
-              <D:href>#{options[:root_uri_path]}</D:href>
+              <D:href>#{root_uri_path}</D:href>
             </D:owner>
           EOS
         end
@@ -113,6 +108,15 @@ module DAV4Rack
 
 
     private
+      def env
+        options[:env] || {}
+      end
+
+      def root_uri_path
+        tmp = @options[:root_uri_path]
+        tmp.respond_to?(:call) ? tmp.call(env) : tmp
+      end
+      
       def get_privileges_aggregate
         privileges_aggregate = PRIVILEGES.inject('') do |ret, priv|
           ret << '<D:privilege><%s /></privilege>' % priv

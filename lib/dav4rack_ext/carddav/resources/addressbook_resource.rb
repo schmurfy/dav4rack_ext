@@ -104,8 +104,7 @@ module DAV4Rack
 
       def setup
         super
-        book_path = router_params[:book_id]
-        @address_book = options[:_object_] || current_user.find_addressbook(book_path)
+        @address_book = options[:_object_] || current_user.find_addressbook(router_params)
       end
 
       def exist?
