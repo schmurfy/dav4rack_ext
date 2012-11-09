@@ -10,24 +10,36 @@ class XMLSniffer
   end
   
   def call(env)
+    ret = nil
     ret = @app.call(env)
-    request = Rack::Request.new(env)
     
-    puts "*** REQUEST ( #{request.request_method} #{request.path} ) ***"
+  ensure
+    request = Rack::Request.new(env)
+    puts "\n*** REQUEST ( #{request.request_method} #{request.path} ) ***"
     request.body.rewind
     dump_headers(env)
-    dump_xml(request.body.read)
+    
+    body = request.body.read
     request.body.rewind
     
-    if ret[2].respond_to?(:body) && !ret[2].body.empty?
-      puts "\n*** RESPONSE (#{ret[0]}) ***"
-      ret[1].each do |name, value|
-        puts "#{name} = #{value}"
+    unless body.empty?
+      dump_xml(body)
+    end
+    
+    if ret
+      if ret[2].respond_to?(:body) && !ret[2].body.empty? && !ret[-1].body[0].empty?
+        puts "\n    --- RESPONSE (#{ret[0]}) ---"
+        ret[1].each do |name, value|
+          puts "#{name} = #{value}"
+        end
+        
+        dump_xml(ret[-1].body[0])
+      else
+        puts "\n    --- EMPTY RESPONSE (#{ret[0]}) ---"
+        ret[1].each do |name, value|
+          puts "#{name} = #{value}"
+        end
       end
-      
-      dump_xml(ret[-1].body[0])
-    else
-      puts "\n*** EMPTY RESPONSE (#{ret[0]}) ***"
     end
     
     ret
@@ -50,8 +62,10 @@ private
   end
   
   def extract_headers(env)
-    env.select {|k,v| k.start_with? 'HTTP_'}
-      .collect {|pair| [pair[0].sub(/^HTTP_/, ''), pair[1]]}
+    headers = env.select {|k,v| k.start_with?('HTTP_') || (k[0].upcase == k[0])}
+    headers.map do |pair|
+      [pair[0].ljust(20), pair[1]]
+    end
   end
   
 end
