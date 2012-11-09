@@ -104,12 +104,11 @@ module DAV4Rack
 
       def setup
         super
-        @address_book = options[:_object_] || current_user.find_addressbook(router_params)
+        @address_book = @options[:_object_] || current_user.current_addressbook()
       end
 
       def exist?
-        # Rails.logger.error "ABR::exist?(#{public_path})"
-        return !@address_book.nil?
+        @address_book != nil
       end
 
       def collection?

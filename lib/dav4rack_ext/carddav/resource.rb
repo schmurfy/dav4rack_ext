@@ -14,9 +14,7 @@ module DAV4Rack
       end
       
       def current_user
-        @current_user ||= (
-            options[:current_user].respond_to?(:call) ? options[:current_user].call() : options[:current_user]
-          )
+        @current_user ||= options[:current_user].call(env)
       end
       
       def user_agent
@@ -132,7 +130,7 @@ module DAV4Rack
         new_path = add_slashes(path)
 
         child_class.new("#{new_public}#{child.path}", "#{new_path}#{child.path}",
-            request, response, options.merge(:_object_ => child, :_parent_ => parent)
+            request, response, options.merge(_object_: child, _parent_: self)
           )
       end
 

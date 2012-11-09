@@ -58,8 +58,8 @@ module DAV4Rack
       def setup
         super
         
-        @address_book = options[:_parent_] || current_user.find_addressbook(router_params)
-        @contact = options[:_object_] || @address_book.find_contact(router_params[:contact_id])
+        @address_book = @options[:_parent_] || current_user.current_addressbook()
+        @contact = @options[:_object_] || current_user.current_contact()
         
       end
 
@@ -108,10 +108,15 @@ module DAV4Rack
 
       # Overload parent in this case because we want a different class (AddressBookResource)
       def parent
-        # Rails.logger.error "Contact::Parent FOR: #{@public_path}"
-        elements = File.split(@public_path)
-        return nil if (elements.first == '/book')
-        AddressbookResource.new(elements.first, elements.first, @request, @response, @options)
+        @address_book
+      end
+      
+      def parent_exists?
+        @address_book != nil
+      end
+      
+      def parent_collection?
+        true
       end
       
       def get(request, response)

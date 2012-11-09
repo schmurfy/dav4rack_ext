@@ -5,13 +5,20 @@ describe 'RFC 6352: CardDav' do
   before do
     @dav_ns = "DAV:"
     @carddav_ns = "urn:ietf:params:xml:ns:carddav"
+    
+    user_builder = proc do |env|
+      contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+      contact.stubs(:etag).returns('ETAG')
+      contact.stubs(:vcard).returns(@parsed_vcard)
       
-    @book = FactoryGirl.build(:book, path: 'castor', name: "A book")
-    @user = user = FactoryGirl.build(:user, login: 'john', addressbooks: [@book])
+      FactoryGirl.build(:user, env: env, login: 'john', addressbooks: [
+          FactoryGirl.build(:book, path: 'castor', name: "A book", contacts: [contact])
+        ])
+    end
     
     app = Rack::Builder.new do
-      use XMLSniffer
-      run DAV4Rack::Carddav.app('/', current_user: user)
+      # use XMLSniffer
+      run DAV4Rack::Carddav.app('/', current_user: user_builder)
     end
     
     serve_app(app)
@@ -30,6 +37,23 @@ TEL;TYPE=WORK,VOICE:412 605 0499
 TEL;TYPE=FAX:412 605 0705
 URL:http://www.example.com
 UID:1234-5678-9000-1
+END:VCARD
+    EOS
+    
+    
+    @vcard_raw2 = <<-EOS
+BEGIN:VCARD
+VERSION:3.0
+FN:John Doe
+N:John;Doe
+ADR;TYPE=POSTAL:;2822 Email HQ;Suite 2821;RFCVille;PA;15213;USA
+EMAIL;TYPE=INTERNET,PREF:cyrus@example.com
+NOTE:Example VCard.
+ORG:Self Employed
+TEL;TYPE=WORK,VOICE:412 605 0499
+TEL;TYPE=FAX:412 605 0705
+URL:http://www.example.com
+UID:1234-5678-9000-9
 END:VCARD
     EOS
     
@@ -75,29 +99,17 @@ END:VCARD
         end
         
         should 'create contact' do
-          contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-          contact.stubs(:etag).returns('ETAG')
-          
-          @book.expects(:create_contact).returns(contact)
-          contact.expects(:update_from_vcard).with do |card|
-            card.to_s.should == @vcard_raw
-          end
-          contact.expects(:save).returns(true)
+          Testing::Contact.any_instance.expects(:etag).returns("ETAG")
           
           # the url does not need to match the UID
-          response = request(:put, '/books/castor/new.vcf', @headers.merge(input: @vcard_raw))
+          response = request(:put, '/books/castor/new.vcf', @headers.merge(input: @vcard_raw2))
+          response.status.should == 201
+          
           # 6.3.2.3
           response.headers['ETag'].should == "ETAG"
-          
-          response.status.should == 201
         end
         
         should 'return an error if contact exists' do
-          contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-          contact.stubs(:etag).returns('ETAG')
-          
-          @book.contacts << contact
-          
           response = request(:put, '/books/castor/new.vcf', @headers.merge(input: @vcard_raw))
           response.status.should == 409 # Conflict
         end
@@ -124,15 +136,9 @@ END:VCARD
         
         describe '[6.3.2.3] Address Object Resource Entity Tag' do
           should 'set Etag header on GET' do
-            contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-            contact.stubs(:etag).returns('CONTACT-ETAG')
-            contact.expects(:vcard).returns(@parsed_vcard)
-            
-            @book.contacts << contact
-            
             response = request(:get, '/books/castor/1234-5678-9000-1.vcf')
             response.status.should == 200
-            response.headers['ETag'].should == "CONTACT-ETAG"
+            response.headers['ETag'].should == "ETAG"
           end
           
         end
@@ -183,12 +189,6 @@ END:VCARD
   
   describe '[8] Address Book Reports' do
     should 'advertise supported reports (REPORT method)' do
-      contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-      contact.stubs(:etag).returns('CONTACT-ETAG')
-      contact.stubs(:vcard).returns(@parsed_vcard)
-      
-      @book.contacts << contact
-      
       response = propfind('/books/', [
           ['supported-report-set', @dav_ns]
         ])
@@ -201,14 +201,6 @@ END:VCARD
     
     
     describe '[8.3.1] CARDDAV:supported-collation-set Property' do
-      before do
-        @contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-        @contact.stubs(:etag).returns('CONTACT-ETAG')
-        @contact.stubs(:vcard).returns(@parsed_vcard)
-        
-        @book.contacts << @contact
-      end
-      
       should 'return supported collations' do
         response = propfind('/books/castor', [
             ['supported-collation-set', @carddav_ns]
@@ -257,8 +249,6 @@ END:VCARD
       end
       
       should 'return multiple cards' do
-        @book.contacts << @contact
-                
         response = request(:report, "/books/castor", input: @raw_query, 'HTTP_DEPTH' => '0')
         response.status.should == 207
         

@@ -12,15 +12,11 @@ module DAV4Rack
       end
 
       def children
-        current_user.addressbooks.map do |book|
-          child(book)
+        current_user.all_addressbooks.map do |book|
+          child(AddressbookResource, book)
         end
       end
-      
-      def child(name)
-        super(AddressbookResource, name)
-      end
-      
+            
     end
     
   end

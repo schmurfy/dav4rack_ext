@@ -5,21 +5,13 @@ describe 'Principal Resource' do
     @dav_ns = "DAV:"
     @carddav_ns = "urn:ietf:params:xml:ns:carddav"
     
-    @user = FactoryGirl.build(:user, login: 'john')
-    
-    
-    @req = Rack::Request.new({})
-    @response = stub('Response')
-    
-    @res = DAV4Rack::Carddav::AddressbookCollectionResource.new(
-        "/books/", "/", @req, @response, current_user: @user
-      )
-    
-    
-    user = @user
+    user_builder = proc do |env|
+      FactoryGirl.build(:user, env: env, login: 'john')
+    end
+        
     app = Rack::Builder.new do
-      use XMLSniffer
-      run DAV4Rack::Carddav.app('/cards/', current_user: user)
+      # use XMLSniffer
+      run DAV4Rack::Carddav.app('/cards/', current_user: user_builder)
     end
     
     serve_app(app)

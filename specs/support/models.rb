@@ -113,10 +113,46 @@ module Testing
     attribute :login, String
     attribute :addressbooks, Array[AddressBook], default: []
     
-    def find_addressbook(opts)
-      path = opts[:book_id] || raise("book_id is missing: #{opts}")
+    def initialize(env, *args)
+      super(*args)
+      @env = env
+    end
+    
+    def all_addressbooks
+      # may filter with router_params, or not
+      addressbooks
+    end
+    
+    
+    def find_addressbook(params)
+      path = params[:book_id]
       addressbooks.detect{|b| b.path == path }
     end
+    
+    
+    def current_addressbook
+      path = router_params[:book_id]
+      addressbooks.detect{|b| b.path == path }
+    end
+    
+    def current_contact
+      uid = router_params[:contact_id]
+      if uid && current_addressbook
+        current_addressbook.find_contact(uid)
+      else
+        nil
+      end
+    end
+    
+    def contacts
+      current_addressbook.contacts
+    end
+  
+  private
+    def router_params
+      @env['router.params'] || {}
+    end
+    
     
   end
   
