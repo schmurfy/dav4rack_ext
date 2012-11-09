@@ -44,9 +44,7 @@ module DAV4Rack
         end
         
         property('getcontenttype') do
-          <<-EOS
-            <getcontenttype>httpd/unix-directory</getcontenttype>
-          EOS
+          "httpd/unix-directory"
         end
 
         # property('getetag') do

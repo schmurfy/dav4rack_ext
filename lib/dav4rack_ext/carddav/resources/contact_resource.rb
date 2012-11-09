@@ -52,7 +52,6 @@ module DAV4Rack
       def exist?
         Logger.info "ContactR::exist?(#{public_path});"
         @contact != nil
-        # current_user.find_contact(File.split(public_path).last) != nil
       end
       
       def setup
@@ -97,7 +96,6 @@ module DAV4Rack
 
         if @contact.save
           @public_path = File.join(@address_book.path, @contact.uid)
-          # @public_path = "/book/#{@address_book.id}/#{@contact.uid}"
           response['ETag'] = @contact.etag
           Created
         else
