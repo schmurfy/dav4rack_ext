@@ -104,7 +104,6 @@ module DAV4Rack
         end
       end
 
-      # Overload parent in this case because we want a different class (AddressBookResource)
       def parent
         @address_book
       end
@@ -123,7 +122,6 @@ module DAV4Rack
       end
 
       def delete
-        # TODO: Proper authorization, is this OUR contact?
         @contact.destroy
         NoContent
       end
