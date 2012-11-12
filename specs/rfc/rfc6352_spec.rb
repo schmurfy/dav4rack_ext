@@ -66,7 +66,7 @@ END:VCARD
     describe '[6.1] Address Book Support' do
       it '[6.1] advertise carddav support (MUST include addressbook in DAV header)' do
         response = request(:options, '/')
-        response.headers['Dav'].must.include?('addressbook')
+        response.headers['Dav'].should.include?('addressbook')
         response.status.should == 200
       end
     end

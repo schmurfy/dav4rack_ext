@@ -22,10 +22,6 @@ group(:test) do
   gem 'guard',          '~> 1.5.4'
   gem 'rb-fsevent'
   gem 'growl'
-  
-  # gem 'em-http-request'
-  # gem 'faraday'
-  # gem 'em-synchrony'
-  
+    
   gem 'rack-test',      '~> 0.6.2'
 end

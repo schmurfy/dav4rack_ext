@@ -9,7 +9,7 @@ describe 'RFC 5397: WebDAV Current Principal Extension' do
     @root_path = root_path = '/'
     
     app = Rack::Builder.new do
-      use XMLSniffer
+      # use XMLSniffer
       run DAV4Rack::Carddav.app(root_path, current_user: user)
     end
     

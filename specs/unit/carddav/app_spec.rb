@@ -6,7 +6,7 @@ describe 'Rack App' do
     @user = user = stub('User', username: 'john')
     
     app = Rack::Builder.new do
-      use XMLSniffer
+      # use XMLSniffer
       run DAV4Rack::Carddav.app('/', current_user: user)
     end
     
