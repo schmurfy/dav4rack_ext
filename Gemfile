@@ -13,14 +13,13 @@ group(:example) do
 end
 
 group(:test) do
-  gem 'schmurfy-bacon', path: '/Users/schmurfy/Dev/personal/gems/bacon'
-  gem 'mocha',          '~> 0.10.0'
+  gem 'eetee', path: '/Users/schmurfy/Dev/personal/gems/eetee'
+  gem 'mocha',          '~> 0.12.0'
   gem 'factory_girl',   '~> 4.0'
   gem 'virtus'
   
   gem 'simplecov'
-  gem 'guard'
-  gem 'guard-bacon'
+  gem 'guard',          '~> 1.5.4'
   gem 'rb-fsevent'
   gem 'growl'
   
@@ -28,5 +27,5 @@ group(:test) do
   # gem 'faraday'
   # gem 'em-synchrony'
   
-  gem 'rack-test'
+  gem 'rack-test',      '~> 0.6.2'
 end

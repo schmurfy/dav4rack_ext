@@ -5,17 +5,23 @@ require "bundler/gem_tasks"
 task :default => :test
 
 task :test do
-  require 'bacon'
   
-  # do not generate coverage report from travis
+  # do not generate coverage report under travis
   unless ENV['TRAVIS']
-    ENV['COVERAGE'] = "1"
+    
+    require 'simplecov'
+    SimpleCov.command_name "E.T."
+    SimpleCov.start do
+      add_filter ".*_spec"
+      add_filter "/helpers/"
+    end
   end
   
-  Dir[File.expand_path('../specs/**/**/*_spec.rb', __FILE__)].each do |file|
-    puts "File: #{file}:"
-    load(file)
-  end
+  require 'eetee'
+  
+  runner = EEtee::Runner.new
+  runner.run_pattern('specs/**/*_spec.rb')
+  runner.report_results()
   
 end
 
