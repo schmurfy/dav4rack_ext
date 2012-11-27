@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rake'
-gem 'dav4rack', path: '/Users/schmurfy/Dev/personal/dav4rack'
+gem 'dav4rack', git: 'git://github.com/schmurfy/dav4rack.git', branch: 'parent_collection'
 
 group(:example) do
   gem 'thin'
