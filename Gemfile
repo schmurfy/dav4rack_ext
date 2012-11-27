@@ -13,7 +13,7 @@ group(:example) do
 end
 
 group(:test) do
-  gem 'eetee', path: '/Users/schmurfy/Dev/personal/gems/eetee'
+  gem 'eetee',          '= 0.0.1'
   gem 'mocha',          '~> 0.12.0'
   gem 'factory_girl',   '~> 4.0'
   gem 'virtus'
