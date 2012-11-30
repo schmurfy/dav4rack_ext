@@ -17,6 +17,12 @@ module DAV4Rack
       raise "unknown options: #{opts}" unless opts.empty?
       
       HttpRouter.new do |r|
+        # try to help iOS
+        r.add("#{root_path}/.well_known/carddav/").to do |env|
+          root = env['REQUEST_PATH']
+          pos = root.index('.well_known')
+          [302, {'Location' => root[0...pos]}, []]
+        end
 
         r.add("#{root_path}").to DAV4RackExt::Handler.new(
             :logger                   => logger,
