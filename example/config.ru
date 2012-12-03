@@ -40,7 +40,7 @@ app2 = DAV4Rack::Carddav.app('/:prefix/cards/',
     current_user: method(:create_user),
     root_uri_path: lambda do |env|
       path = env['REQUEST_PATH']
-      n = path.index("/cards/")
+      n = path.index("/cards")
       path[0...(n + 7)]
     end
   )

@@ -44,10 +44,10 @@ module Testing
         end
         
         if existing_field
-          puts "Updated '#{a.group}.#{a.name}' to '#{a.value}'"
+          # puts "Updated '#{a.group}.#{a.name}' to '#{a.value}'"
           existing_field.value = a.value
         else
-          puts "Created '#{a.group}.#{a.name}' with '#{a.value}'"
+          # puts "Created '#{a.group}.#{a.name}' with '#{a.value}'"
           fields << Field.from_vcf_field(a)
         end
       end
@@ -55,8 +55,6 @@ module Testing
     end
     
     def save
-      p fields
-      
       # no-op
       true
     end
