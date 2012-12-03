@@ -26,19 +26,20 @@ describe 'Principal Resource' do
         ['principal-URL', @dav_ns]
       ], headers)
     
-    ensure_element_exists(response, %{D|prop > D|principal-URL > D|href[text()="/cards/"]})
+    ensure_element_exists(response, %{D|prop > D|principal-URL > D|href[text()="/cards"]})
   end
   
-  should 'return / as principal-URI for iOS 6.0' do
+  should 'handle stupid requests from iOS 6.0' do
     headers = {
       'HTTP_USER_AGENT' => 'iOS/6.0 (10A403) Preferences/1.0'
     }
     
-    response = propfind('/cards/', [
+    response = propfind('/something/cards/something/cards/', [
         ['principal-URL', @dav_ns]
       ], headers)
     
-    ensure_element_exists(response, %{D|prop > D|principal-URL > D|href[text()="/"]})
+    response.status.should == 301
+    response.headers['Location'].should == '/something/cards'
   end
   
 end
