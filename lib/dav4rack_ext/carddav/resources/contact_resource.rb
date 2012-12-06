@@ -99,8 +99,9 @@ module DAV4Rack
           response['ETag'] = @contact.etag
           Created
         else
-          # Is another error more appropriate?
-          raise Conflict
+          # Mac OS X Contact will reload the contact
+          # from the server
+          raise Forbidden
         end
       end
 
