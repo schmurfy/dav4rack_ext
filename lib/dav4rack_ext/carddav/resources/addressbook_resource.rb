@@ -94,7 +94,7 @@ module DAV4Rack
         property('getctag') do
           <<-EOS
             <APPLE1:getctag xmlns:APPLE1='http://calendarserver.org/ns/'>
-              #{@address_book.updated_at.to_i}
+              #{@address_book.ctag}
             </APPLE1:getctag>
           EOS
         end
