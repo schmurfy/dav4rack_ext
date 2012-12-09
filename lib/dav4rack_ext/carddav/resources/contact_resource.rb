@@ -110,7 +110,10 @@ module DAV4Rack
         @contact.update_from_vcard(vcf)
 
         if @contact.save
-          @public_path = File.join(@address_book.path, @contact.uid)
+          new_public = @public_path.split('/')[0...-1]
+          new_public << @contact.uid.to_s
+          
+          @public_path = new_public.join('/')
           response['ETag'] = @contact.etag
           Created
         else

@@ -22,6 +22,16 @@ describe 'Contact Resource' do
     serve_app(app)
   end
   
+  should 'update contact and return correct location', :force => true do
+    # the url does not need to match the UID
+    response = request(:put, '/books/castor/crap',
+        input: @contact.vcard.to_s
+      )
+    
+    response.status.should == 201
+    response.headers['Location'].should == 'http://example.org:80/books/castor/1234-5678-9000-1'
+  end
+  
   should 'return an error if If-Match do not match (rfc2068 14.25)' do
     Testing::Contact.any_instance.expects(:etag).returns("ETAG")
     
