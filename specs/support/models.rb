@@ -93,6 +93,10 @@ module Testing
       contacts.detect{|c| c.uid == uid.to_s }
     end
     
+    def ctag
+      updated_at
+    end
+    
     def create_contact(uid)
       Contact.new(uid: uid).tap do |c|
         contacts << c
