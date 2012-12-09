@@ -13,7 +13,8 @@ task :test do
     SimpleCov.command_name "E.T."
     SimpleCov.start do
       add_filter ".*_spec"
-      add_filter "/helpers/"
+      add_filter "/specs/helpers/"
+      add_filter "/example/"
     end
   end
   
