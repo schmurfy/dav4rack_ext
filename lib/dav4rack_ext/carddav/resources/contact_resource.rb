@@ -85,6 +85,21 @@ module DAV4Rack
         # If the client has explicitly stated they want a new contact
         raise Conflict if (want_new_contact and @contact)
         
+        if_match = request.env['HTTP_IF_MATCH']
+        if if_match
+          # client wants to update a contact, return an error if no
+          # contact was found
+          if (if_match == '*') || !@contact
+            raise PreconditionFailed unless @contact
+          
+          # client wants to update the contact with specific etag,
+          # return an error if the contact was updated by someone else
+          elsif (if_match != @contact.etag)
+            raise PreconditionFailed
+            
+          end
+        end
+        
         if @contact
           Logger.debug("Updating contact #{uid} (#{@contact.object_id})")
         else
