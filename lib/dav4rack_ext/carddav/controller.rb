@@ -69,27 +69,21 @@ module DAV4Rack
             end
             raise BadRequest
           end
-
-          props = request_document.xpath("/#{xpath_element('addressbook-multiget', :carddav)}/#{xpath_element('prop')}").children.find_all(&:element?).map{|n|
-            to_element_hash(n)
-          }
-          # Handle the address-data element
-          # - Check for child properties (vCard fields)
-          # - Check for mime-type and version.  If present they must match vCard 3.0 for now since we don't support anything else.
-          hrefs = request_document.xpath("/#{xpath_element('addressbook-multiget', :carddav)}/#{xpath_element('href')}").collect{|n| 
-            text = n.text
-            # TODO: Make sure that the hrefs passed into the report are either paths or fully qualified URLs with the right host+protocol+port prefix
-            path = URI.parse(text).path
-            Logger.debug "Scanned this HREF: #{text} PATH: #{path}"
-            text
-          }.compact
           
-          if hrefs.empty?
-            xml_error(BadRequest) do |err|
-              err.send :'href-missing'
-            end
+          namespaces = {
+            'D' => 'DAV:',
+            'C' => 'urn:ietf:params:xml:ns:carddav'
+          }
+          
+          
+          # props = request_document.css("C|addressbook-multiget C|address-data > C|prop", namespaces).map do |el|
+          props = request_document.css("C|addressbook-multiget C|address-data", namespaces).map do |el|
+            to_element_hash(el)
           end
-
+          
+          # collect the requested urls
+          hrefs = request_document.css("C|addressbook-multiget D|href", namespaces).map(&:content)
+          
           multistatus do |xml|
             hrefs.each do |_href|
               xml.response do
