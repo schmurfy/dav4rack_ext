@@ -13,6 +13,19 @@ This gem extends dav4rack to provide a CardDAV extension, CalDAV is not currentl
 
 Have a look at the examle folder, this is a standard Rack application and should run with any compliant server.
 
+You can run the example with thin like this:
+
+```bash
+$ cd example
+$ bundle exec thin start
+```
+
+Once the server is started you can connect to it using http://127.0.0.1:3000/u/cards with any login/password
+(the example has no authentication set up)
+
+# Supported clients
+- Mac OS X (tested with Mountain Lion )
+- iPhone 5.x and 6.x
 
 # Setting up development environment
 
