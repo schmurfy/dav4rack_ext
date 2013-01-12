@@ -1,10 +1,10 @@
 module DAV4Rack
   module Carddav
-    
+
     class AddressbookCollectionResource < Resource
-      
+
       def exist?
-        return true
+        true
       end
 
       def collection?
@@ -16,8 +16,8 @@ module DAV4Rack
           child(AddressbookResource, book)
         end
       end
-            
+
     end
-    
+
   end
 end
