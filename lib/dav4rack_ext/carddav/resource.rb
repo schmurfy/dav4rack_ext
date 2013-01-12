@@ -18,12 +18,7 @@ module DAV4Rack
       end
       
       def user_agent
-        env = options[:env]
-        if env
-          env['HTTP_USER_AGENT'] || ""
-        else
-          ""
-        end
+        options[:env]['HTTP_USER_AGENT'].to_s rescue ""
       end
             
       def router_params
@@ -31,10 +26,9 @@ module DAV4Rack
       end
       
       def setup
-                
         @propstat_relative_path = true
         @root_xml_attributes = {
-          'xmlns:C' => CARDAV_NS, 
+          'xmlns:C' => CARDAV_NS,
           'xmlns:APPLE1' => 'http://calendarserver.org/ns/'
         }
       end
@@ -51,9 +45,8 @@ module DAV4Rack
         namespace = element[:ns_href]
         
         key = "#{namespace}*#{name}"
-        
-        handler = self.class.properties[key]
-        if handler
+
+        if handler = self.class.properties[key]
           ret = instance_exec(element, &handler[0])
           # TODO: find better than that
           if ret.is_a?(String) && ret.include?('<')
@@ -93,7 +86,6 @@ module DAV4Rack
 
       def properties
         selected_properties = self.class.properties.reject{|key, arr| arr[1] == true }
-        ret = {}
         selected_properties.keys.map do |key|
           ns, name = key.split('*')
           {:name => name, :ns_href => ns}

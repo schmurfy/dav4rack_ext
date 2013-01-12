@@ -4,7 +4,7 @@ module DAV4Rack
     class AddressbookCollectionResource < Resource
       
       def exist?
-        return true
+        true
       end
 
       def collection?

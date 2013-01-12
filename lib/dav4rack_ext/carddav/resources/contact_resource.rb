@@ -42,8 +42,6 @@ module DAV4Rack
           end
         end
       end
-      
-      
 
       def collection?
         false
@@ -56,10 +54,8 @@ module DAV4Rack
       
       def setup
         super
-        
         @address_book = @options[:_parent_] || current_user.current_addressbook()
         @contact = @options[:_object_] || current_user.current_contact()
-        
       end
 
       def put(request, response)
@@ -84,9 +80,8 @@ module DAV4Rack
 
         # If the client has explicitly stated they want a new contact
         raise Conflict if (want_new_contact and @contact)
-        
-        if_match = request.env['HTTP_IF_MATCH']
-        if if_match
+
+        if if_match = request.env['HTTP_IF_MATCH']
           # client wants to update a contact, return an error if no
           # contact was found
           if (if_match == '*') || !@contact

@@ -4,15 +4,13 @@ module DAV4Rack
     class PrincipalResource < Resource
       
       def exist?
-        ret = (path == '') || (path == '/')
-        return ret
+        (path == '') || (path == '/')
       end
 
       def collection?
-        return true
+        true
       end
-      
-      
+
       define_properties('DAV:') do
         property('alternate-URI-set') do
           # "<D:alternate-URI-set xmlns:D='DAV:' />"
@@ -66,7 +64,6 @@ module DAV4Rack
           EOS
         end
 
-        
         property('resourcetype') do
           <<-EOS
             <resourcetype>
@@ -104,7 +101,6 @@ module DAV4Rack
           property('principal-address') do
             ""
           end
-
         end
       end
     

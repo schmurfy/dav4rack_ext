@@ -6,8 +6,8 @@ module DAV4Rack
     DAV_EXTENSIONS = ["access-control", "addressbook"].freeze
     
     def self.app(root_path = '/', opts = {})
-      logger = opts.delete(:logger) || ::Logger.new('/dev/null')
-      current_user = opts.delete(:current_user)
+      logger        = opts.delete(:logger) || ::Logger.new('/dev/null')
+      current_user  = opts.delete(:current_user)
       root_uri_path = opts.delete(:root_uri_path) || root_path
       
       if (root_path != '/') && root_path[-1] == '/'
