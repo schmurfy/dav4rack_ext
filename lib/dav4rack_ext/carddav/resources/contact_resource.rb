@@ -104,18 +104,15 @@ module DAV4Rack
 
         @contact.update_from_vcard(vcf)
 
-        if @contact.save
+        if @contact.save(user_agent)
           new_public = @public_path.split('/')[0...-1]
           new_public << @contact.uid.to_s
-          
+
           @public_path = new_public.join('/')
           response['ETag'] = @contact.etag
-          Created
-        else
-          # Mac OS X Contact will reload the contact
-          # from the server
-          raise Forbidden
         end
+        
+        Created
       end
 
       def parent
