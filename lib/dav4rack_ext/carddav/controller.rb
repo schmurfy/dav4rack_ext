@@ -66,8 +66,11 @@ module DAV4Rack
         end
 
         # props = request_document.css("C|addressbook-multiget C|address-data > C|prop", namespaces).map do |el|
-        props = request_document.css("C|addressbook-multiget C|address-data", NAMESPACES).map do |el|
-          to_element_hash(el)
+        props = []
+        request_document.css("C|addressbook-multiget > D|prop", NAMESPACES).each do |el|
+          el.children.select(&:element?).each do |child|
+            props << to_element_hash(child)
+          end
         end
 
         # collect the requested urls

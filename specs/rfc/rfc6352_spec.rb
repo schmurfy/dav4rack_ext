@@ -255,6 +255,9 @@ END:VCARD
         # '*=' = include
         ensure_element_exists(response, %{D|href[text()*="1234-5678-9000-2"] + D|status[text()*="404"]}, 'D' => @dav_ns)
         
+        # <D:getetag>"23ba4d-ff11fb"</D:getetag>
+        etag = ensure_element_exists(response, %{D|href[text()*="1234-5678-9000-1"] + D|propstat > D|prop > D|getetag}, 'D' => @dav_ns)
+        etag.text.should == 'ETAG'
         
         vcard = ensure_element_exists(response, %{D|href[text()*="1234-5678-9000-1"] + D|propstat > D|prop > C|address-data}, 'D' => @dav_ns, 'C' => @carddav_ns)
         vcard.text.should.include? <<-EOS
