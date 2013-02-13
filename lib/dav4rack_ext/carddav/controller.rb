@@ -95,6 +95,7 @@ module DAV4Rack
             end
           end
         end
+      end
       
     end
     
