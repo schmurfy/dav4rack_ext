@@ -57,7 +57,7 @@ private
     source = Ox.dump(doc)
     puts ""
     puts CodeRay.scan(source, :xml).term
-  rescue SyntaxError
+  rescue SyntaxError, Ox::ParseError
     puts "\n#{str}"
   end
   
