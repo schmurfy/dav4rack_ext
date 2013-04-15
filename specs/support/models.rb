@@ -54,7 +54,7 @@ module Testing
       
     end
     
-    def save
+    def save(user_agent)
       # no-op
       true
     end
