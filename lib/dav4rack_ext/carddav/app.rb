@@ -32,50 +32,50 @@ module DAV4Rack
         end
 
         r.add("#{root_path}/").to DAV4RackExt::Handler.new(
-            :logger                   => logger,
-            :dav_extensions           => DAV_EXTENSIONS,
-            :alway_include_dav_header => true,
-            :pretty_xml               => true,
-            :root_uri_path            => root_uri_path,
-            :resource_class           => DAV4Rack::Carddav::PrincipalResource,
-            :controller_class         => DAV4Rack::Carddav::Controller,
-            :current_user             => current_user,
+            :logger                    => logger,
+            :dav_extensions            => DAV_EXTENSIONS,
+            :always_include_dav_header => true,
+            :pretty_xml                => true,
+            :root_uri_path             => root_uri_path,
+            :resource_class            => DAV4Rack::Carddav::PrincipalResource,
+            :controller_class          => DAV4Rack::Carddav::Controller,
+            :current_user              => current_user,
             
             # resource options
-            :books_collection         => "/books/"
+            :books_collection          => "/books/"
           )
         
         r.add("#{root_path}/books/").to DAV4RackExt::Handler.new(
-            :logger                   => logger,
-            :dav_extensions           => DAV_EXTENSIONS,
-            :alway_include_dav_header => true,
-            :pretty_xml               => true,
-            :root_uri_path            => root_uri_path,
-            :resource_class           => DAV4Rack::Carddav::AddressbookCollectionResource,
-            :controller_class         => DAV4Rack::Carddav::Controller,
-            :current_user             => current_user
+            :logger                    => logger,
+            :dav_extensions            => DAV_EXTENSIONS,
+            :always_include_dav_header => true,
+            :pretty_xml                => true,
+            :root_uri_path             => root_uri_path,
+            :resource_class            => DAV4Rack::Carddav::AddressbookCollectionResource,
+            :controller_class          => DAV4Rack::Carddav::Controller,
+            :current_user              => current_user
           )
         
         r.add("#{root_path}/books/:book_id/:contact_id(.vcf)").to DAV4RackExt::Handler.new(
-            :logger                   => logger,
-            :dav_extensions           => DAV_EXTENSIONS,
-            :alway_include_dav_header => true,
-            :pretty_xml               => true,
-            :root_uri_path            => root_uri_path,
-            :resource_class           => DAV4Rack::Carddav::ContactResource,
-            :controller_class         => DAV4Rack::Carddav::Controller,
-            :current_user             => current_user
+            :logger                    => logger,
+            :dav_extensions            => DAV_EXTENSIONS,
+            :always_include_dav_header => true,
+            :pretty_xml                => true,
+            :root_uri_path             => root_uri_path,
+            :resource_class            => DAV4Rack::Carddav::ContactResource,
+            :controller_class          => DAV4Rack::Carddav::Controller,
+            :current_user              => current_user
           )
         
         r.add("#{root_path}/books/:book_id").to DAV4RackExt::Handler.new(
-            :logger                   => logger,
-            :dav_extensions           => DAV_EXTENSIONS,
-            :alway_include_dav_header => true,
-            :pretty_xml               => true,
-            :root_uri_path            => root_uri_path,
-            :resource_class           => DAV4Rack::Carddav::AddressbookResource,
-            :controller_class         => DAV4Rack::Carddav::Controller,
-            :current_user             => current_user
+            :logger                    => logger,
+            :dav_extensions            => DAV_EXTENSIONS,
+            :always_include_dav_header  => true,
+            :pretty_xml                => true,
+            :root_uri_path             => root_uri_path,
+            :resource_class            => DAV4Rack::Carddav::AddressbookResource,
+            :controller_class          => DAV4Rack::Carddav::Controller,
+            :current_user              => current_user
           )
         
         # Another hack for iOS 6
