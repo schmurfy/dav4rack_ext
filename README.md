@@ -4,6 +4,7 @@
 This gem is tested against these ruby by travis-ci.org:
 
 - mri 1.9.3
+- mri 2.0.0
 
 # What is this gem ?
 This gem extends dav4rack to provide a CardDAV extension, CalDAV is not currently available but will eventually be available too.
