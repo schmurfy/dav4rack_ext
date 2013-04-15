@@ -12,6 +12,10 @@ group(:example) do
   gem 'ox'
 end
 
+group(:local) do
+  gem 'rb-blink1'
+end
+
 group(:test) do
   gem 'eetee',          '~> 0.0.5'
   gem 'mocha',          '~> 0.12.0'
@@ -22,7 +26,6 @@ group(:test) do
   gem 'guard',          '~> 1.5.4'
   gem 'rb-fsevent'
   gem 'growl'
-  gem 'rb-blink1'
     
   gem 'rack-test',      '~> 0.6.2'
 end
