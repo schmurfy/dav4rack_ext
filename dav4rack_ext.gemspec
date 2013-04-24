@@ -16,5 +16,5 @@ Gem::Specification.new do |gem|
   
   gem.add_dependency 'dav4rack'
   gem.add_dependency 'http_router'
-  gem.add_dependency 'vcard_parser', '0.0.4'
+  gem.add_dependency 'vcard_parser', '0.0.5'
 end
