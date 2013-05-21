@@ -1,4 +1,7 @@
 
+# 0.0.8
+- vcard_parser update
+
 # 0.0.7
 - fixed vcard parsing error when field name contains a /
 
