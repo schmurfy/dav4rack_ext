@@ -86,43 +86,66 @@ END:VCALENDAR
     serve_app(app)
   end
 
+  describe '[1.2]' do
+    it 'uses the caldav namespace' do
+      pending 'check for urn:ietf:params:xml:ns:caldav'
+    end
+  end
 
-  describe '[5] Calendar Feature' do
-    # TODO: find right rfc
-    describe '[5.1] Address Book Support' do
-      it '[5.1] advertise caldav support (MUST include calendar-access in DAV header)' do
+  describe '[5] Calendar Access Feature' do
+    describe '[5.1] Calendar Access Support' do
+      it 'includes "calendar-access" as a field in the DAV response header' do
         response = request :options, '/'
         expect(response.headers['Dav']).to include 'calendar-access'
         expect(response.status).to eq 200
       end
     end
+
+    describe '[5.2] Calendar Collection Properties' do
+      it '[5.2.1] CALDAV:calendar-description Property'
+      it '[5.2.2] CALDAV:calendar-timezone Property'
+      it '[5.2.3] CALDAV:supported-calendar-component-set Property'
+      it '[5.2.4] CALDAV:supported-calendar-data Property'
+      it '[5.2.5] CALDAV:max-resource-size Property'
+      it '[5.2.6] CALDAV:min-date-time Property'
+      it '[5.2.7] CALDAV:max-date-time Property'
+      it '[5.2.8] CALDAV:max-instances Property'
+      it '[5.2.9] CALDAV:max-attendees-per-instance Property'
+      it '[5.2.10] Additional Precondition for PROPPATCH'
+    end
+
+    describe '[5.3] Creating Resources' do
+      pending 'not implemented'
+    end
   end
 
   describe '[6] Calendaring Access Control' do
-    it '[6.1.1] CALDAV:read-free-busy Privilege' do
-      pending 'Not implemented'
+
+    describe '[6.1] Calendaring Privilege' do
+      it '[6.1.1] CALDAV:read-free-busy Privilege'
     end
 
-    it '[6.2.1] CALDAV:calendar-home-set Property' do
-      response = propfind('/', [['calendar-home-set', caldav_ns]])
+    describe '[6.2] Additional Principal Property' do
+      it '[6.2.1] CALDAV:calendar-home-set Property' do
+        response = propfind('/', [['calendar-home-set', caldav_ns]])
 
-      expect(response.status).to eq 207
-      expect(response.body).to have_element('D|calendar-home-set', 'D' => caldav_ns)
+        expect(response.status).to eq 207
+        expect(response.body).to have_element('D|calendar-home-set', 'D' => caldav_ns)
 
-      value = find_content(response.body, 'D|calendar-home-set', 'D' => caldav_ns)
-      expect(value).to eq '/calendars/'
+        value = find_content(response.body, 'D|calendar-home-set', 'D' => caldav_ns)
+        expect(value).to eq '/calendars/'
+      end
+
+      it '[6.2.2] CALDAV:principal-address Property' do
+        response = propfind('/', [['principal-address', caldav_ns]])
+
+        expect(response.status).to eq 207
+        expect(response.body).to have_element('D|principal-address', 'D' => caldav_ns)
+
+        value = find_content(response.body, 'D|principal-address', 'D' => caldav_ns)
+        expect(value).to eq ''
+      end
     end
-
-    it '[6.2.2] CALDAV:principal-address Property' do
-      response = propfind('/', [['principal-address', caldav_ns]])
-
-      expect(response.status).to eq 207
-      expect(response.body).to have_element('D|principal-address', 'D' => caldav_ns)
-
-      value = find_content(response.body, 'D|principal-address', 'D' => caldav_ns)
-      expect(value).to eq ''
-    end
-
   end
 
   describe '[7] Calendaring Reports' do
@@ -138,23 +161,37 @@ END:VCALENDAR
       expect(elements[0].text).to eq ''
     end
 
+    describe '[7.5] Searching Text: Collations' do
+      describe '[7.5.1] CALDAV:supported-collation-set Property' do
+        it 'returns supported collations' do
+          response = propfind('/calendars/business', [
+              ['supported-collation-set', caldav_ns]
+            ])
 
-    describe '[7.5.1] CALDAV:supported-collation-set Property' do
-      it 'returns supported collations' do
-        response = propfind('/calendars/business', [
-            ['supported-collation-set', caldav_ns]
-          ])
+          expect(response.body).to have_element('D|supported-collation-set', 'D' => caldav_ns)
 
-        expect(response.body).to have_element('D|supported-collation-set', 'D' => caldav_ns)
+          elements = find_element(response.body, 'D|supported-collation-set', 'D' => caldav_ns)
+          expect(elements[0].text).to eq ''
+        end
 
-        elements = find_element(response.body, 'D|supported-collation-set', 'D' => caldav_ns)
-        expect(elements[0].text).to eq ''
+        it 'is not returned in allprop query' do
+          response = propfind('/calendars/business')
+          expect(response.body).not_to have_element('D|supported-collation-set', 'D' => caldav_ns)
+        end
       end
+    end
 
-      it 'is not returned in allprop query' do
-        response = propfind('/calendars/business')
-        expect(response.body).not_to have_element('D|supported-collation-set', 'D' => caldav_ns)
-      end
+    describe '[7.8] CALDAV:calendar-query REPORT' do
+      pending 'REQUIRED'
+    end
+
+    describe '[8.4] Finding Calendars' do
+    end
+
+    describe '[8.5] Storing and Using Attachments' do
+    end
+
+    describe '[8.6] Storing and Using Alarms' do
     end
 
     describe '[8.7] CARDDAV:calendar-multiget Report' do

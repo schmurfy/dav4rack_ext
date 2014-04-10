@@ -15,7 +15,7 @@ module DAV4Rack
         end
 
         property('getcontentlength') do
-          @event.vcard.to_s.bytesize.to_s
+          @event.to_ical.to_s.bytesize.to_s
         end
 
         property('getcontenttype') do
@@ -29,11 +29,10 @@ module DAV4Rack
 
       define_properties(CALDAV_NS) do
         explicit do
-          # TODO: event-data? check again
-          property('event-data') do |el|
+          property('calendar-data') do |el|
 
-            fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
-            data = @event.ical.to_s(fields) # TODO: ical
+            #fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
+            data = @event.to_ical
 
             <<-EOS
             <C:calendar-data xmlns:C="#{CALDAV_NS}">
@@ -129,8 +128,8 @@ module DAV4Rack
       end
 
       def get(request, response)
-        response.headers['Etag'] = %("#{@contact.etag}")
-        response.body = @event.to_ics # TODO: ical
+        response.headers['Etag'] = %("#{@event.etag}")
+        response.body = @event.to_ical
       end
 
       def delete

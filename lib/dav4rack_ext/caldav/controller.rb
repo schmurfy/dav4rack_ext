@@ -6,7 +6,7 @@ module DAV4Rack
 
       NAMESPACES = {
         'D' => 'DAV:',
-        'C' => 'urn:ietf:params:xml:ns:carddav'
+        'C' => 'urn:ietf:params:xml:ns:caldav'
       }
 
       def initialize(*args, options, env)
@@ -49,7 +49,7 @@ module DAV4Rack
         when :dav
           ns_uri = 'DAV:'
         when :carddav
-          ns_uri = 'urn:ietf:params:xml:ns:carddav'
+          ns_uri = 'urn:ietf:params:xml:ns:caldav'
         end
         "*[local-name()='#{name}' and namespace-uri()='#{ns_uri}']"
       end

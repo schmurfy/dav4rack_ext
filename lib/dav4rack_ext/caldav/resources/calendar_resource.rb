@@ -65,7 +65,7 @@ module DAV4Rack
           property('supported-calendar-data') do
             <<-EOS
               <C:supported-calendar-data xmlns:C='#{CALDAV_NS}'>
-                <C:calendar-data-type content-type='text/ics' version='3.0' />
+                <C:calendar-data-type content-type='text/calendar' version='2.0' />
               </C:supported-calendar-data>
             EOS
           end
@@ -118,7 +118,7 @@ module DAV4Rack
 
       def find_child(uid)
         uid = File.basename(uid, '.ics')
-        event = @calendar.event.find_by(uid: uid)
+        event = @calendar.events.find_by(id: uid)
         if event
           child(EventResource, event)
         else
