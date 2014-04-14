@@ -54,8 +54,8 @@ module DAV4Rack
 
       def setup
         super
-        @calendar = @options[:_parent_] || current_user.current_calendar()
-        @event = @options[:_object_] || current_user.current_event()
+        @calendar = @options[:_parent_]
+        @event = @options[:_object_]
       end
 
       def put(request, response)

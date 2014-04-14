@@ -35,7 +35,7 @@ module DAV4Rack
         end
 
         property('displayname') do
-          @calendar.name
+          @calendar.description
         end
 
         property('creationdate') do
@@ -71,7 +71,7 @@ module DAV4Rack
           end
 
           property('calendar-description') do
-            @calendar.name
+            @calendar.description
           end
 
           property('max-resource-size') do
@@ -99,7 +99,8 @@ module DAV4Rack
 
       def setup
         super
-        @calendar = @options[:_object_] || current_user.current_calendar
+        @skip_alias << :find_calendar # jesus christ superstart... wtf d4r?
+        @calendar = @options[:_object_] || find_calendar(router_params[:calendar_id]) || find_calendar(request.env['action_dispatch.request.path_parameters'][:calendar_id])
       end
 
       def exist?
@@ -110,6 +111,20 @@ module DAV4Rack
         true
       end
 
+      def find_calendar(calendar_id)
+        current_user.calendars.find do |calendar|
+          calendar.path == calendar_id
+        end
+      end
+
+      def find_event(event_id)
+        if @calendar.events.is_a? Array
+          @calendar.events.find { |e| e.path == event_id }
+        else
+          @calendar.events.find event_id
+        end
+      end
+
       def children
         @calendar.events.collect do |event|
           child(EventResource, event, @calendar)
@@ -118,7 +133,7 @@ module DAV4Rack
 
       def find_child(uid)
         uid = File.basename(uid, '.ics')
-        event = @calendar.events.find_by(id: uid)
+        event = find_event(uid)
         if event
           child(EventResource, event)
         else

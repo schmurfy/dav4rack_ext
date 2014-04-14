@@ -1,50 +1,6 @@
 require 'spec_helper'
 
 describe 'RFC 4791: CalDav' do
-
-  let :event do
-    double 'Event', etag: Time.now,
-                    ical: parsed_event,
-                    path: '1234-5678-9000-1',
-                    created_at: Time.now,
-                    updated_at: Time.now
-  end
-
-  let :event_2 do
-    double 'Event', etag: Time.now,
-                    ical: parsed_event,
-                    path: '1234-5678-9000-2',
-                    created_at: Time.now,
-                    updated_at: Time.now
-  end
-
-  let :calendar do
-    double 'Calendar', path: 'business',
-                       name: 'Business Calendar',
-                       ctag: Time.now,
-                       events: [event, event_2],
-                       current_event: event,
-                       created_at: Time.now,
-                       updated_at: Time.now
-  end
-
-  let :user do
-    d = double 'User', login: 'john',
-                       calendars: [calendar],
-                       current_calendar: calendar
-
-    d.stub(:call).and_return d
-    d
-  end
-
-  let :dav_ns do
-    "DAV:"
-  end
-
-  let :caldav_ns do
-    "urn:ietf:params:xml:ns:caldav"
-   end
-
   let :raw_event do
     <<-EOS
 BEGIN:VCALENDAR
@@ -66,15 +22,53 @@ RRULE:FREQ=YEARLY;BYDAY=1SU;BYMONTH=4
 TZOFFSETFROM:-0500
 TZOFFSETTO:-0400
 TZNAME:Eastern Daylight Time (US & Canada)
+UID:1234-5678-9000-1
 END:DAYLIGHT
 END:VTIMEZONE
 END:VCALENDAR
     EOS
   end
 
-  let :parsed_event do
-    #Ical.parse(raw_event)
+  let :event do
+    double 'Event', etag: Time.now,
+                    path: '1234-5678-9000-1',
+                    created_at: Time.now,
+                    updated_at: Time.now,
+                    to_ical: raw_event
   end
+
+  let :event_2 do
+    double 'Event', etag: Time.now,
+                    path: '1234-5678-9000-2',
+                    created_at: Time.now,
+                    updated_at: Time.now,
+                    to_ical: raw_event
+  end
+
+  let :calendar do
+    double 'Calendar', path: 'business',
+                       description: 'Business Calendar',
+                       ctag: Time.now,
+                       events: [event, event_2],
+                       created_at: Time.now,
+                       updated_at: Time.now
+  end
+
+  let :user do
+    d = double 'User', login: 'john',
+                       calendars: [calendar]
+
+    d.stub(:call).and_return d
+    d
+  end
+
+  let :dav_ns do
+    "DAV:"
+  end
+
+  let :caldav_ns do
+    "urn:ietf:params:xml:ns:caldav"
+   end
 
   before do
     current_user = user
@@ -181,60 +175,29 @@ END:VCALENDAR
       end
     end
 
-    describe '[7.8] CALDAV:calendar-query REPORT' do
-      pending 'REQUIRED'
-    end
+    describe '[7.8] CALDAV:calendar-query REPORT'
 
-    describe '[8.4] Finding Calendars' do
-    end
-
-    describe '[8.5] Storing and Using Attachments' do
-    end
-
-    describe '[8.6] Storing and Using Alarms' do
-    end
-
-    describe '[8.7] CARDDAV:calendar-multiget Report' do
+    describe '[7.9] CALDAV:calendar-multiget Report' do
       before do
-        @raw_query = <<-EOS
- <?xml version="1.0" encoding="utf-8" ?>
- <C:calendar-multiget xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
-   <D:prop>
-     <D:getetag/>
-     <C:address-data>
-       <C:prop name="VERSION"/>
-       <C:prop name="UID"/>
-       <C:prop name="NICKNAME"/>
-       <C:prop name="EMAIL"/>
-       <C:prop name="FN"/>
-     </C:address-data>
-   </D:prop>
-   <D:href>/calendars/business/1234-5678-9000-1.icf</D:href>
- </C:addressbook-multiget>
-        EOS
+        @raw_query = %q{
+           <?xml version="1.0" encoding="utf-8" ?>
+           <C:calendar-multiget xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
+             <D:prop>
+               <D:getetag/>
+               <C:calendar-data/>
+             </D:prop>
+             <D:href>/calendars/business/1234-5678-9000-1.ics</D:href>
+           </C:calendar-multiget>
+        }
       end
 
-      it 'returns multiple events' do
+      it 'returns calendar data' do
         response = request(:report, "/calendars/business", input: @raw_query, 'HTTP_DEPTH' => '0')
         expect(response.status).to eq 207
 
-        # '*=' = include
-        expect(response.body).to have_element(%{D|href[text()*="1234-5678-9000-2"] + D|status[text()*="404"]}, 'D' => dav_ns)
-
-        # <D:getetag>"23ba4d-ff11fb"</D:getetag>
-        etag = find_element(response.body, %{D|href[text()*="1234-5678-9000-1"] + D|propstat > D|prop > D|getetag}, 'D' => dav_ns)
-        expect(etag.text).to eq 'ETAG'
-
-        vcard = find_element(response.body, %{D|href[text()*="1234-5678-9000-1"] + D|propstat > D|prop > C|calendar-data}, 'D' => dav_ns, 'C' => caldav_ns)
-        expect(vcard.text).to include <<-EOS
-BEGIN:VCARD
-VERSION:3.0
-FN:Cyrus Daboo
-EMAIL;type=INTERNET,PREF:cyrus@example.com
-NICKNAME:me
-UID:1234-5678-9000-1
-END:VCARD
-        EOS
+        expect(response.body).to include '<C:calendar-data>'
+        expect(response.body).to include 'BEGIN:VCALENDAR'
+        expect(response.body).to include 'UID:1234-5678-9000-1'
       end
 
       it 'returns an error with Depth != 0' do
