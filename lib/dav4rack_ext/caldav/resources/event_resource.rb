@@ -1,43 +1,43 @@
 require 'vcard_parser'
 
 module DAV4Rack
-  module Carddav
+  module Caldav
 
-    class ContactResource < Resource
+    class EventResource < Resource
 
       define_properties('DAV:') do
         property('getetag') do
-          %("#{@contact.etag}")
+          %("#{@event.etag}")
         end
 
         property('creationdate') do
-          @contact.created_at
+          @event.created_at
         end
 
         property('getcontentlength') do
-          @contact.vcard.to_s.bytesize.to_s
+          @event.to_ical.to_s.bytesize.to_s
         end
 
         property('getcontenttype') do
-          "text/vcard"
+          "text/calendar"
         end
 
         property('getlastmodified') do
-          @contact.updated_at
+          @event.updated_at
         end
       end
 
-      define_properties(CARDAV_NS) do
+      define_properties(CALDAV_NS) do
         explicit do
-          property('address-data') do |el|
+          property('calendar-data') do |el|
 
-            fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
-            data = @contact.vcard.to_s(fields)
+            #fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
+            data = @event.to_ical
 
             <<-EOS
-            <C:address-data xmlns:C="#{CARDAV_NS}">
+            <C:calendar-data xmlns:C="#{CALDAV_NS}">
               <![CDATA[#{data}]]>
-            </C:address-data>
+            </C:calendar-data>
             EOS
           end
         end
@@ -48,14 +48,14 @@ module DAV4Rack
       end
 
       def exist?
-        Logger.info "ContactR::exist?(#{public_path});"
-        @contact != nil
+        Logger.info "EventResource::exist?(#{public_path});"
+        @event != nil
       end
 
       def setup
         super
-        @address_book = @options[:_parent_] || current_user.current_addressbook()
-        @contact = @options[:_object_] || current_user.current_contact()
+        @calendar = @options[:_parent_]
+        @event = @options[:_object_]
       end
 
       def put(request, response)
@@ -76,51 +76,51 @@ module DAV4Rack
         # if contact already exists
         want_new_contact = (request.env['HTTP_IF_NONE_MATCH'] == '*')
 
-        @contact = @address_book.find_contact(uid)
+        @event = @calendar.find_event(uid)
 
         # If the client has explicitly stated they want a new contact
-        raise Conflict if (want_new_contact and @contact)
+        raise Conflict if (want_new_contact and @event)
 
         if if_match = request.env['HTTP_IF_MATCH']
           # client wants to update a contact, return an error if no
           # contact was found
-          if (if_match == '*') || !@contact
-            raise PreconditionFailed unless @contact
+          if (if_match == '*') || !@event
+            raise PreconditionFailed unless @event
 
           # client wants to update the contact with specific etag,
           # return an error if the contact was updated by someone else
-          elsif (if_match != %("#{@contact.etag}"))
+          elsif (if_match != %("#{@event.etag}"))
             raise PreconditionFailed
 
           end
         end
 
-        if @contact
-          Logger.debug("Updating contact #{uid} (#{@contact.object_id})")
+        if @event
+          Logger.debug("Updating contact #{uid} (#{@event.object_id})")
         else
           Logger.debug("Creating new contact ! (#{uid})")
-          @contact = @address_book.create_contact(uid)
+          @event = @calendar.create_event(uid)
         end
 
-        @contact.update_from_vcard(vcf)
+        @event.update_from_ics(ics)
 
         if @contact.save(user_agent)
           new_public = @public_path.split('/')[0...-1]
-          new_public << @contact.uid.to_s
+          new_public << @event.uid.to_s
 
           @public_path = new_public.join('/')
-          response['ETag'] = %("#{@contact.etag}")
+          response['ETag'] = %("#{@event.etag}")
         end
 
         Created
       end
 
       def parent
-        @address_book
+        @calendar
       end
 
       def parent_exists?
-        @address_book != nil
+        @calendar != nil
       end
 
       def parent_collection?
@@ -128,12 +128,12 @@ module DAV4Rack
       end
 
       def get(request, response)
-        response.headers['Etag'] = %("#{@contact.etag}")
-        response.body = @contact.vcard.vcard
+        response.headers['Etag'] = %("#{@event.etag}")
+        response.body = @event.to_ical
       end
 
       def delete
-        @contact.destroy
+        @event.destroy
         NoContent
       end
 
