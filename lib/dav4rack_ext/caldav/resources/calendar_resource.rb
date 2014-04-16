@@ -129,7 +129,7 @@ module DAV4Rack
         if @calendar.events.is_a? Array
           @calendar.events.find { |e| e.path == event_id }
         else
-          @calendar.events.find event_id
+          @calendar.events.find_by uid: event_id
         end
       end
 
