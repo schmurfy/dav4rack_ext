@@ -66,7 +66,7 @@ module DAV4Rack
             <<-EOS
               <C:supported-calendar-component-set xmlns:C='#{CALDAV_NS}'>
                 <C:comp name="VEVENT"/>
-               </C:supported-calendar-component-set>
+              </C:supported-calendar-component-set>
             EOS
           end
 
