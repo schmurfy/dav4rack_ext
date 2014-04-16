@@ -18,7 +18,7 @@ module DAV4Rack
           return NotFound
         end
 
-        if request_document.nil? or request_document.root.nil?
+        if request_document.nil? || request_document.root.nil?
           render_xml(:error) do |xml|
             xml.send :'empty-request'
           end
