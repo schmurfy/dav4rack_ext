@@ -175,7 +175,35 @@ END:VCALENDAR
       end
     end
 
-    describe '[7.8] CALDAV:calendar-query REPORT'
+    describe '[7.8] CALDAV:calendar-query REPORT' do
+      before do
+        @raw_query = %q{
+          <?xml version="1.0" encoding="utf-8" ?>
+          <A:calendar-query xmlns:A="urn:ietf:params:xml:ns:caldav" xmlns:B="DAV:">
+            <B:prop>
+              <B:getcontenttype/>
+              <B:getetag/>
+            </B:prop>
+            <A:filter>
+              <A:comp-filter name="VCALENDAR">
+                <A:comp-filter name="VEVENT">
+                  <A:time-range start="20140402T000000Z" end="20141126T000000Z"/>
+                </A:comp-filter>
+              </A:comp-filter>
+            </A:filter>
+          </A:calendar-query>
+        }
+      end
+
+      it 'filters by date range' do
+        response = request(:report, '/calendars/business', input: @raw_query, 'HTTP_DEPTH' => 1)
+
+        expect(response.body).to include '<D:getetag>'
+        expect(response.body).to include '<C:calendar-data>'
+        expect(response.body).to include '<D:status>HTTP/1.0 200 OK</D:status>'
+        expect(response.body).to include "<D:href>/calendars/business/#{event.path}.ics</D:href>"
+      end
+    end
 
     describe '[7.9] CALDAV:calendar-multiget Report' do
       before do

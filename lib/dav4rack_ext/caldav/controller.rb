@@ -28,6 +28,8 @@ module DAV4Rack
         case request_document.root.name
         when 'calendar-multiget'
           calendar_multiget(request_document)
+        when 'calendar-query'
+          calendar_query(request_document)
         else
           render_xml(:error) do |xml|
             xml.send :'supported-report'
@@ -52,6 +54,38 @@ module DAV4Rack
           ns_uri = 'urn:ietf:params:xml:ns:caldav'
         end
         "*[local-name()='#{name}' and namespace-uri()='#{ns_uri}']"
+      end
+
+      def calendar_query(request_document)
+        # TODO: actually respect the query's filters.
+
+        props = []
+        props << DAVElement.new(
+          :namespace => 'D',
+          :name => 'getetag',
+          :ns_href => NAMESPACES['D']
+        )
+
+        props << DAVElement.new(
+          :namespace => 'C',
+          :name => 'calendar-data',
+          :ns_href => NAMESPACES['C']
+        )
+
+        multistatus do |xml|
+          resource.children.each do |child|
+            xml.response do
+              xml.href [child.public_path, '.ics'].join ''
+
+              if child.exist?
+                propstats(xml, get_properties(child, props)) # TODO: which properties?
+              else
+                xml.status "#{http_version} #{NotFound.status_line}"
+              end
+
+            end
+          end
+        end
       end
 
       def calendar_multiget(request_document)

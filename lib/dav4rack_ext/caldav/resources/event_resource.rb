@@ -48,7 +48,7 @@ module DAV4Rack
       end
 
       def exist?
-        Logger.info "ContactR::exist?(#{public_path});"
+        Logger.info "EventResource::exist?(#{public_path});"
         @event != nil
       end
 
