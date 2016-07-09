@@ -33,12 +33,8 @@ module DAV4Rack
             
             fields = el[:children].select{|e| e[:name] == 'prop' }.map{|e| e[:attributes]['name'] }
             data = @contact.vcard.to_s(fields)
-                      
-            <<-EOS
-            <C:address-data xmlns:C="#{CARDAV_NS}">
-              <![CDATA[#{data}]]>
-            </C:address-data>
-            EOS
+            
+            %{<C:address-data xmlns:C="#{CARDAV_NS}">#{data}</C:address-data>}
           end
         end
       end
