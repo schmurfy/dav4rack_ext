@@ -120,17 +120,15 @@ module DAV4Rack
           child(ContactResource, c, @address_book)
         end
       end
-            
-      def find_child(uid)
-        uid = File.basename(uid, '.vcf')
-        c = @address_book.find_contact(uid)
-        if c
-          child(ContactResource, c)
-        else
-          nil
+      
+      # { href: uid }
+      def find_children(ids)
+        @address_book.find_contacts(ids).each_with_object({}) do |(href, contact), ret|
+          if contact
+            ret[href] = child(ContactResource, contact)
+          end
         end
       end
-      
     end
     
   end

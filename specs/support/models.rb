@@ -89,6 +89,13 @@ module Testing
     attribute :path, String
     attribute :contacts, Array[Contact], default: []
     
+    def find_contacts(ids)
+      ids.each_with_object({}) do |(href, path), ret|
+        uid = File.basename(path, '.vcf')
+        ret[href] = contacts.detect{|c| c.uid == uid.to_s }
+      end
+    end
+    
     def find_contact(uid)
       contacts.detect{|c| c.uid == uid.to_s }
     end

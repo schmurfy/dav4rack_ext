@@ -75,17 +75,22 @@ module DAV4Rack
 
         # collect the requested urls
         hrefs = request_document.css("C|addressbook-multiget D|href", NAMESPACES).map(&:content)
-
+        
+        
+        
+        children_ids = {}
+        hrefs.reject{|_href| resource.is_self?(_href) }.each do |_href|
+          path = File.split(URI.parse(_href).path).last
+          children_ids[_href] = File.split(path).last
+        end
+        
+        children = resource.find_children(children_ids)
+        
         multistatus do |xml|
           hrefs.each do |_href|
             xml.response do
               xml.href _href
-
-              path = File.split(URI.parse(_href).path).last
-              Logger.debug "Creating child w/ ORIG=#{resource.public_path} HREF=#{_href} FILE=#{path}!"
-
-              cur_resource = resource.is_self?(_href) ? resource : resource.find_child(File.split(path).last)
-
+              cur_resource = resource.is_self?(_href) ? resource : children[_href]
               if cur_resource && cur_resource.exist?
                 propstats(xml, get_properties(cur_resource, props))
               else
