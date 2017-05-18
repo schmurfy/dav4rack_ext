@@ -1,6 +1,4 @@
 env: TRAVIS_CI=1
 bundler_args: --without local
 rvm:
-  - 1.9.3
-  - 2.0.0
-
+  - 2.3.1
