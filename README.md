@@ -25,8 +25,8 @@ Once the server is started you can connect to it using http://127.0.0.1:3000/u/c
 (the example has no authentication set up)
 
 # Supported clients
-- Mac OS X (tested with Mountain Lion )
-- iPhone 5.x and 6.x
+- Mac OS X: recently tested on 10.11 (El Capitan)
+- iOS: recently tested on 8 and 9
 
 # Setting up development environment
 
@@ -41,4 +41,3 @@ the tests will run when a file changed, if only want to run all tests once:
 ```bash
 $ bundle exec rake
 ```
-

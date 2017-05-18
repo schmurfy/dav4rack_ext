@@ -23,7 +23,7 @@ group(:test) do
   gem 'virtus'
   
   gem 'simplecov'
-  gem 'guard',          '~> 1.5.4'
+  gem 'guard',          '~> 1.8.3'
   gem 'rb-fsevent'
   gem 'growl'
     
