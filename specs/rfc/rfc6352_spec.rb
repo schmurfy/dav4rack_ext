@@ -182,6 +182,20 @@ END:VCARD
       value.should == :empty
     end
     
+    it 'DAV:sync-token', focus: true do
+      response = propfind('/books/castor', [
+          ['displayname', @dav_ns],
+          ['sync-token', @dav_ns]
+        ])
+            
+      response.status.should == 207
+      
+      puts response.body
+      
+      value = element_content(response, 'D|sync-token', 'D' => @carddav_ns)
+      value.should == 'TOTO'
+
+    end
   end
   
   
@@ -218,15 +232,30 @@ END:VCARD
       end
     end
     
-    it '[8.6] CARDDAV:addressbook-query Report' do
-      # unsupported for now
+    describe '[8.6] CARDDAV:addressbook-query Report' do
+      before do
+        # @contact1 = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+        # @contact2 = FactoryGirl.build(:contact, uid: '1234-5678-9000-2')
+      end
+      
+      should 'return results' do
+        response = report('/books/castor', %w(UID EMAIL FN))
+        # puts response.body
+        elements = ensure_element_exists(response, 'D|multistatus > D|response', 'D' => @dav_ns)
+        
+        elements[0].tap do |el|
+          el.css('D|href', 'D' => @dav_ns).first.content.should == "/books/castor/1234-5678-9000-1"
+          el.css('D|getetag', 'D' => @dav_ns).first.content.should == "ETAG"
+        end
+        
+      end
     end
     
     
     describe '[8.7] CARDDAV:addressbook-multiget Report' do
       before do
-        @contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
-        @contact.stubs(:vcard).returns(@parsed_vcard)
+        # @contact = FactoryGirl.build(:contact, uid: '1234-5678-9000-1')
+        # @contact.stubs(:vcard).returns(@parsed_vcard)
 
         
         @raw_query = <<-EOS

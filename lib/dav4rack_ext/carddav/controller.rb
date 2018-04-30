@@ -28,6 +28,8 @@ module DAV4Rack
         case request_document.root.name
         when 'addressbook-multiget'
           addressbook_multiget(request_document)
+        when 'addressbook-query'
+          addressbook_query(request_document)
         else
           render_xml(:error) do |xml|
             xml.send :'supported-report'
@@ -53,6 +55,30 @@ module DAV4Rack
         end
         "*[local-name()='#{name}' and namespace-uri()='#{ns_uri}']"
       end
+      
+      
+      def addressbook_query(request_document)
+        
+        props = []
+        request_document.css("C|addressbook-query > D|prop", NAMESPACES).each do |el|
+          el.children.select(&:element?).each do |child|
+            props << to_element_hash(child)
+          end
+        end
+        
+        
+        contacts = resource.children
+        
+        multistatus do |xml|
+          contacts.each do |contact|
+            xml.response do
+              xml.href contact.path
+              propstats(xml, get_properties(contact, props))
+            end
+          end
+        end
+      end
+      
 
       def addressbook_multiget(request_document)
         # TODO: Include a DAV:error response

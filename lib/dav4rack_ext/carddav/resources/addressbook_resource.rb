@@ -55,6 +55,12 @@ module DAV4Rack
           @address_book.updated_at
         end
         
+        explicit do
+          property('sync-token') do
+            @address_book.updated_at
+          end
+        end
+
       end
       
       

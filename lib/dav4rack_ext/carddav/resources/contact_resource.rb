@@ -25,6 +25,13 @@ module DAV4Rack
         property('getlastmodified') do
           @contact.updated_at
         end
+        
+        explicit do
+          property('sync-token') do
+            @contact.etag
+          end
+        end
+
       end
       
       define_properties(CARDAV_NS) do

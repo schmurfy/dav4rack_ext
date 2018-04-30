@@ -1,4 +1,34 @@
 module HTTPDAVTest
+  def report(url, properties = [], opts = {})
+    namespaces = {
+      'DAV:' => 'D',
+      'urn:ietf:params:xml:ns:carddav' => 'C'
+    }
+    
+    fields_list = properties.map do |prop_name|
+      %{<C:prop name="#{prop_name}"/>}
+    end.join("\n")
+    
+    body = <<~EOS
+      <D:prop>
+        <D:getetag/>
+        <C:address-data>
+          #{fields_list}
+        </C:address-data>
+      </D:prop>
+      <C:filter/>
+    EOS
+    
+    data = <<~EOS
+      <?xml version="1.0" encoding="UTF-8"?>
+      <C:addressbook-query xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:carddav">
+        #{body}
+      </C:addressbook-query>
+    EOS
+    
+    request('REPORT', url, opts.merge(input: data))
+  end
+  
   def propfind(url, properties = :all, opts = {})
     namespaces = {
       'DAV:' => 'D',
