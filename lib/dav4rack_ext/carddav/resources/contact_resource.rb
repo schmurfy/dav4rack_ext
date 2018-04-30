@@ -85,6 +85,8 @@ module DAV4Rack
         raise Conflict if (want_new_contact and @contact)
 
         if if_match = request.env['HTTP_IF_MATCH']
+          # remove quotes if present
+          if_match = if_match.tr('"', '')
           # client wants to update a contact, return an error if no
           # contact was found
           if (if_match == '*') || !@contact
