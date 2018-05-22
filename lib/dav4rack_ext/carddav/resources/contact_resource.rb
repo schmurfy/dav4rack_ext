@@ -109,7 +109,7 @@ module DAV4Rack
 
         @contact.update_from_vcard(vcf)
 
-        if @contact.save(user_agent)
+        if @contact.save(user_agent, env)
           new_public = @public_path.split('/')[0...-1]
           new_public << @contact.uid.to_s
 
